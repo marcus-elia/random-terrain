@@ -4,7 +4,6 @@ GameManager::GameManager()
 {
     screenWidth = 1024;
     screenHeight = 512;
-    chunkSize = 512;
     renderRadius = 5;
 
     initializePlayer();
@@ -12,11 +11,10 @@ GameManager::GameManager()
     initializeButtons();
     makeInstructions();
 }
-GameManager::GameManager(int inputScreenWidth, int inputScreenHeight, int inputChunkSize, int inputRenderRadius)
+GameManager::GameManager(int inputScreenWidth, int inputScreenHeight, int inputRenderRadius)
 {
     screenWidth = inputScreenWidth;
     screenHeight = inputScreenHeight;
-    chunkSize = inputChunkSize;
     renderRadius = inputRenderRadius;
 
     initializePlayer();
@@ -38,7 +36,7 @@ void GameManager::initializePlayer()
     Point playerStartUp = {0, PLAYER_HEIGHT, 0};
     player = Player(playerStartLoc, playerStartLook, playerStartUp, PLAYER_SPEED, MOUSE_SENSITIVITY,
                     PLAYER_HEIGHT, PLAYER_RADIUS, MAX_DISTANCE_FROM_SPAWN, GRAVITY, PLAYER_JUMP_AMOUNT);
-    currentPlayerChunkID = getChunkIDContainingPoint(player.getLocation(), chunkSize);
+    currentPlayerChunkID = getChunkIDContainingPoint(player.getLocation(), CHUNK_SIZE);
 }
 
 void GameManager::initializeButtons()
@@ -156,7 +154,7 @@ void GameManager::updateCurrentChunks()
             {
                 newColor = {0, 0.6, 0, 1};
             }
-            allSeenChunks[index] = std::make_shared<Chunk>(p, chunkSize, newColor);
+            allSeenChunks[index] = std::make_shared<Chunk>(p, CHUNK_SIZE, newColor);
         }
         currentChunks.push_back(allSeenChunks[index]);
     }
@@ -276,7 +274,7 @@ void GameManager::playerTick()
     }
 
     // Check if the player has entered a new chunk
-    int newPlayerChunkID = getChunkIDContainingPoint(player.getLocation(), chunkSize);
+    int newPlayerChunkID = getChunkIDContainingPoint(player.getLocation(), CHUNK_SIZE);
     if(newPlayerChunkID != currentPlayerChunkID)
     {
         currentPlayerChunkID = newPlayerChunkID;

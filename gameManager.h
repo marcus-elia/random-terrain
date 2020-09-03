@@ -43,9 +43,11 @@ private:
     bool showMouse = true;
 
     // Game parameters
+    RGBAcolor CHUNK_GROUND_COLOR = {0, 1, 0, 1};
+    int CHUNK_SIZE = 512;
+    int POINTS_PER_CHUNK = 8;
     double PLAYER_HEIGHT = 20;
     double PLAYER_RADIUS = 5;
-    RGBAcolor CHUNK_GROUND_COLOR = {0, 1, 0, 1};
     double PLAYER_SPEED = 2;
     double MOUSE_SENSITIVITY = 0.03;
     int MAX_DISTANCE_FROM_SPAWN = 10240; // 10 chunks
@@ -63,7 +65,7 @@ private:
     RGBAcolor BLACK = {0.0, 0.0, 0.0, 1.0};
 public:
     GameManager();
-    GameManager(int inputScreenWidth, int inputScreenHeight, int inputChunkSize, int inputRenderRadius);
+    GameManager(int inputScreenWidth, int inputScreenHeight, int inputRenderRadius);
 
     // Helper functions for the constructors
     void initializePlayer();
