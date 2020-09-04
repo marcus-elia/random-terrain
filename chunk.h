@@ -63,6 +63,11 @@ public:
     // assuming that the point is in this chunk
     double getHeightAt(Point p) const;
 
+    // Use the perlin seed and the height scale factor to convert a double
+    // between 0 and 1 (the relative height) to the actual height
+    double relativeToAbsoluteHeight(double y) const;
+    double absoluteToRelativeHeight(double y) const;
+
     void draw() const;
 };
 

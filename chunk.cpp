@@ -18,7 +18,7 @@ Chunk::Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide, 
     pointsPerSide = inputPointsPerSide;
     heightScaleFactor = inputHeightScaleFactor;
     groundColor = inputGroundColor;
-    perlinSeed = inputPerlinSeed;
+    perlinSeed = inputPerlinSeed > 0 ? inputPerlinSeed : 0.1; // can't be zero, gets divided by
     initializeCenter();
     initializeChunkID();
     initializeTerrainPoints(terrainHeights);
@@ -44,7 +44,7 @@ void Chunk::initializeTerrainPoints(std::vector<std::vector<double>> terrainHeig
         {
             // A perlin seed of 0.5 will make the max height in this chunk be heightScaleFactor
             double x = center.x - sideLength/2 + i*squareSize;
-            double y = terrainHeights[i][j]*heightScaleFactor*2*perlinSeed;
+            double y = relativeToAbsoluteHeight(terrainHeights[i][j]);
             double z = center.z - sideLength/2 + j*squareSize;
             terrainPoints[i].push_back({x, y, z});
         }
@@ -137,7 +137,7 @@ std::vector<double> Chunk::getTopTerrainHeights(bool isRelative) const
     {
         if(isRelative)
         {
-            top.push_back(terrainPoints[i][0].y / (heightScaleFactor*2*perlinSeed));
+            top.push_back(absoluteToRelativeHeight(terrainPoints[i][0].y));
         }
         else
         {
@@ -153,7 +153,7 @@ std::vector<double> Chunk::getBottomTerrainHeights(bool isRelative) const
     {
         if(isRelative)
         {
-            bottom.push_back(terrainPoints[i][pointsPerSide-1].y / (heightScaleFactor*2*perlinSeed));
+            bottom.push_back(absoluteToRelativeHeight(terrainPoints[i][pointsPerSide-1].y));
         }
         else
         {
@@ -169,7 +169,7 @@ std::vector<double> Chunk::getLeftTerrainHeights(bool isRelative) const
     {
         if(isRelative)
         {
-            left.push_back(terrainPoints[0][j].y / (heightScaleFactor*2*perlinSeed));
+            left.push_back(absoluteToRelativeHeight(terrainPoints[0][j].y));
         }
         else
         {
@@ -185,7 +185,7 @@ std::vector<double> Chunk::getRightTerrainHeights(bool isRelative) const
     {
         if(isRelative)
         {
-            right.push_back(terrainPoints[pointsPerSide-1][j].y / (heightScaleFactor*2*perlinSeed));
+            right.push_back(absoluteToRelativeHeight(terrainPoints[pointsPerSide-1][j].y));
         }
         else
         {
@@ -194,6 +194,7 @@ std::vector<double> Chunk::getRightTerrainHeights(bool isRelative) const
     }
     return right;
 }
+
 
 double Chunk::getHeightAt(Point p) const
 {
@@ -222,7 +223,14 @@ double Chunk::getHeightAt(Point p) const
         }
         return squareBottomRight.y;
     }
-
+}
+double Chunk::relativeToAbsoluteHeight(double y) const
+{
+    return perlinSeed*heightScaleFactor*(y + 1);
+}
+double Chunk::absoluteToRelativeHeight(double y) const
+{
+    return y / (perlinSeed*heightScaleFactor) - 1;
 }
 
 

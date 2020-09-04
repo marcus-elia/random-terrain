@@ -17,7 +17,7 @@ GameManager::GameManager(int inputScreenWidth, int inputScreenHeight, int inputR
     screenWidth = inputScreenWidth;
     screenHeight = inputScreenHeight;
     renderRadius = inputRenderRadius;
-    chunkSeeds = PerlinNoiseGenerator(PERLIN_SEED_SIZE, PERLIN_SEED_SIZE, 1);
+    chunkSeeds = PerlinNoiseGenerator(PERLIN_SEED_SIZE, PERLIN_SEED_SIZE, 100);
 
     initializePlayer();
     updateCurrentChunks();
@@ -227,7 +227,7 @@ std::vector<double> GameManager::getTerrainHeightsRight(int chunkID, bool isRela
 
 double GameManager::getPerlinValue(Point2D p)
 {
-    return chunkSeeds.getPerlinNoise()[mod(p.x, PERLIN_SEED_SIZE)][mod(p.z, PERLIN_SEED_SIZE)];
+    return chunkSeeds.getScaledNoise(0.1,1)[mod(p.x, PERLIN_SEED_SIZE)][mod(p.z, PERLIN_SEED_SIZE)];
 }
 
 // ====================================
