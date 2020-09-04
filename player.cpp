@@ -172,7 +172,8 @@ void Player::applyGravity()
         // If we moved and the terrain became lower, we need to fall down
         if(location.y > currentTerrainHeight + height/2)
         {
-            isGrounded = false;
+            lookingAt.y += currentTerrainHeight + height/2 - location.y;
+            location.y = currentTerrainHeight + height/2;
         }
     }
 }
