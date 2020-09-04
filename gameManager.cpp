@@ -5,6 +5,7 @@ GameManager::GameManager()
     screenWidth = 1024;
     screenHeight = 512;
     renderRadius = 5;
+    chunkSeeds = PerlinNoiseGenerator(PERLIN_SEED_SIZE, PERLIN_SEED_SIZE, 1);
 
     initializePlayer();
     updateCurrentChunks();
@@ -16,6 +17,7 @@ GameManager::GameManager(int inputScreenWidth, int inputScreenHeight, int inputR
     screenWidth = inputScreenWidth;
     screenHeight = inputScreenHeight;
     renderRadius = inputRenderRadius;
+    chunkSeeds = PerlinNoiseGenerator(PERLIN_SEED_SIZE, PERLIN_SEED_SIZE, 1);
 
     initializePlayer();
     updateCurrentChunks();
@@ -158,59 +160,73 @@ void GameManager::updateCurrentChunks()
             {
                 newColor = {0, 0.6, 0, 1};
             }
+            // Get the borders to make sure the terrain is seamless
+            std::vector<double> relativeHeightsAbove = getTerrainHeightsAbove(index, true);
+            std::vector<double> relativeHeightsBelow = getTerrainHeightsBelow(index, true);
+            std::vector<double> relativeHeightsLeft = getTerrainHeightsLeft(index, true);
+            std::vector<double> relativeHeightsRight = getTerrainHeightsRight(index, true);
+            std::vector<double> absoluteHeightsAbove = getTerrainHeightsAbove(index, false);
+            std::vector<double> absoluteHeightsBelow = getTerrainHeightsBelow(index, false);
+            std::vector<double> absoluteHeightsLeft = getTerrainHeightsLeft(index, false);
+            std::vector<double> absoluteHeightsRight = getTerrainHeightsRight(index, false);
+            // Make a generator for this chunk specfically
             PerlinNoiseGenerator png = PerlinNoiseGenerator(POINTS_PER_CHUNK, POINTS_PER_CHUNK, 1,
-                    getTerrainHeightsAbove(index), getTerrainHeightsBelow(index),
-                    getTerrainHeightsLeft(index), getTerrainHeightsRight(index));
+                                                            relativeHeightsAbove, relativeHeightsBelow,
+                                                            relativeHeightsLeft, relativeHeightsRight);
+            // Scale the noise
             std::vector<std::vector<double>> noise = png.getScaledNoiseApplyBorders(0,1,
-                    getTerrainHeightsAbove(index), getTerrainHeightsBelow(index),
-                    getTerrainHeightsLeft(index), getTerrainHeightsRight(index));
-            allSeenChunks[index] = std::make_shared<Chunk>(p, CHUNK_SIZE, POINTS_PER_CHUNK, newColor, noise, TERRAIN_HEIGHT_FACTOR);
+                                                            relativeHeightsAbove, relativeHeightsBelow,
+                                                            relativeHeightsLeft, relativeHeightsRight);
+            // Create the chunk
+            allSeenChunks[index] = std::make_shared<Chunk>(p, CHUNK_SIZE, POINTS_PER_CHUNK, newColor, noise,
+                    TERRAIN_HEIGHT_FACTOR, getPerlinValue(p), absoluteHeightsAbove, absoluteHeightsBelow,
+                                                           absoluteHeightsLeft, absoluteHeightsRight);
         }
         currentChunks.push_back(allSeenChunks[index]);
     }
 }
-std::vector<double> GameManager::getTerrainHeightsAbove(int chunkID) const
+std::vector<double> GameManager::getTerrainHeightsAbove(int chunkID, bool isRelative) const
 {
     int aboveID = getChunkIDAbove(chunkID);
     if(allSeenChunks.count(aboveID) > 0)
     {
-        return allSeenChunks.at(aboveID)->getBottomTerrainHeights();
+        return allSeenChunks.at(aboveID)->getBottomTerrainHeights(isRelative);
     }
     else
     {
         return std::vector<double>();
     }
 }
-std::vector<double> GameManager::getTerrainHeightsBelow(int chunkID) const
+std::vector<double> GameManager::getTerrainHeightsBelow(int chunkID, bool isRelative) const
 {
     int aboveID = getChunkIDBelow(chunkID);
     if(allSeenChunks.count(aboveID) > 0)
     {
-        return allSeenChunks.at(aboveID)->getTopTerrainHeights();
+        return allSeenChunks.at(aboveID)->getTopTerrainHeights(isRelative);
     }
     else
     {
         return std::vector<double>();
     }
 }
-std::vector<double> GameManager::getTerrainHeightsLeft(int chunkID) const
+std::vector<double> GameManager::getTerrainHeightsLeft(int chunkID, bool isRelative) const
 {
     int aboveID = getChunkIDLeft(chunkID);
     if(allSeenChunks.count(aboveID) > 0)
     {
-        return allSeenChunks.at(aboveID)->getRightTerrainHeights();
+        return allSeenChunks.at(aboveID)->getRightTerrainHeights(isRelative);
     }
     else
     {
         return std::vector<double>();
     }
 }
-std::vector<double> GameManager::getTerrainHeightsRight(int chunkID) const
+std::vector<double> GameManager::getTerrainHeightsRight(int chunkID, bool isRelative) const
 {
     int aboveID = getChunkIDRight(chunkID);
     if(allSeenChunks.count(aboveID) > 0)
     {
-        return allSeenChunks.at(aboveID)->getLeftTerrainHeights();
+        return allSeenChunks.at(aboveID)->getLeftTerrainHeights(isRelative);
     }
     else
     {
@@ -218,7 +234,16 @@ std::vector<double> GameManager::getTerrainHeightsRight(int chunkID) const
     }
 }
 
-// Camera
+double GameManager::getPerlinValue(Point2D p)
+{
+    return chunkSeeds.getPerlinNoise()[mod(p.x, PERLIN_SEED_SIZE)][mod(p.z, PERLIN_SEED_SIZE)];
+}
+
+// ====================================
+//
+//             Camera
+//
+// ===================================
 Point GameManager::getCameraLocation() const
 {
     return player.getLocation();

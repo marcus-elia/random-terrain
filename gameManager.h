@@ -23,7 +23,7 @@ private:
     bool wKey, aKey, sKey, dKey, spacebar;
 
     // Chunks
-    int chunkSize;
+    PerlinNoiseGenerator chunkSeeds;
     int renderRadius;
     std::unordered_map<int, std::shared_ptr<Chunk>> allSeenChunks;
     std::vector<std::shared_ptr<Chunk>> currentChunks;
@@ -47,6 +47,7 @@ private:
     RGBAcolor CHUNK_GROUND_COLOR = {0, 1, 0, 1};
     int CHUNK_SIZE = 512;
     int POINTS_PER_CHUNK = 8;
+    int PERLIN_SEED_SIZE = 10;
     double TERRAIN_HEIGHT_FACTOR = 80;
     double PLAYER_HEIGHT = 20;
     double PLAYER_RADIUS = 5;
@@ -54,7 +55,7 @@ private:
     double MOUSE_SENSITIVITY = 0.03;
     int MAX_DISTANCE_FROM_SPAWN = 10240; // 10 chunks
     double GRAVITY = -0.5;
-    double PLAYER_JUMP_AMOUNT = 10;
+    double PLAYER_JUMP_AMOUNT = 4;
     int BUTTON_WIDTH = 128;
     int BUTTON_HEIGHT = 64;
     int BUTTON_RADIUS = 16;
@@ -80,8 +81,6 @@ public:
     bool getAKey() const;
     bool getSKey() const;
     bool getDKey() const;
-    bool getRKey() const;
-    bool getCKey() const;
     bool getSpacebar() const;
     GameStatus getCurrentStatus() const;
     bool getCloseWindow() const;
@@ -92,8 +91,6 @@ public:
     void setAKey(bool input);
     void setSKey(bool input);
     void setDKey(bool input);
-    void setRKey(bool input);
-    void setCKey(bool input);
     void setSpacebar(bool input);
     void setCurrentStatus(GameStatus input);
 
@@ -102,10 +99,14 @@ public:
     // If the specified adjacent chunk has been created already, then
     // this returns the relevant border of terrain points.
     // Otherwise, returns empty vector
-    std::vector<double> getTerrainHeightsAbove(int chunkID) const;
-    std::vector<double> getTerrainHeightsBelow(int chunkID) const;
-    std::vector<double> getTerrainHeightsLeft(int chunkID) const;
-    std::vector<double> getTerrainHeightsRight(int chunkID) const;
+    std::vector<double> getTerrainHeightsAbove(int chunkID, bool isRelative) const;
+    std::vector<double> getTerrainHeightsBelow(int chunkID, bool isRelative) const;
+    std::vector<double> getTerrainHeightsLeft(int chunkID, bool isRelative) const;
+    std::vector<double> getTerrainHeightsRight(int chunkID, bool isRelative) const;
+
+    // Given the topLeft chunkCoords of a chunk, this returns the perlin seed
+    // (between 0 and 1) for it given by the chunkSeeds P.N.G.
+    double getPerlinValue(Point2D p);
 
     // Camera
     Point getCameraLocation() const;

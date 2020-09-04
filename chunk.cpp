@@ -9,16 +9,20 @@ Chunk::Chunk()
     initializeChunkID();
 }
 Chunk::Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide, RGBAcolor inputGroundColor,
-        std::vector<std::vector<double>> terrainHeights, double inputHeightScaleFactor)
+        std::vector<std::vector<double>> terrainHeights, double inputHeightScaleFactor, double inputPerlinSeed,
+             const std::vector<double> &absoluteHeightsAbove, const std::vector<double> &absoluteHeightsBelow,
+             const std::vector<double> &absoluteHeightsLeft, const std::vector<double> &absoluteHeightsRight)
 {
     topLeft = inputTopLeft;
     sideLength = inputSideLength;
     pointsPerSide = inputPointsPerSide;
     heightScaleFactor = inputHeightScaleFactor;
     groundColor = inputGroundColor;
+    perlinSeed = inputPerlinSeed;
     initializeCenter();
     initializeChunkID();
     initializeTerrainPoints(terrainHeights);
+    overwriteBorderHeights(absoluteHeightsAbove, absoluteHeightsBelow, absoluteHeightsLeft, absoluteHeightsRight);
     initializeNormalVectors();
 }
 
@@ -38,8 +42,9 @@ void Chunk::initializeTerrainPoints(std::vector<std::vector<double>> terrainHeig
         terrainPoints.emplace_back(std::vector<Point>());
         for(int j = 0; j < pointsPerSide; j++)
         {
+            // A perlin seed of 0.5 will make the max height in this chunk be heightScaleFactor
             double x = center.x - sideLength/2 + i*squareSize;
-            double y = terrainHeights[i][j]*heightScaleFactor;
+            double y = terrainHeights[i][j]*heightScaleFactor*2*perlinSeed;
             double z = center.z - sideLength/2 + j*squareSize;
             terrainPoints[i].push_back({x, y, z});
         }
@@ -66,6 +71,43 @@ void Chunk::initializeNormalVectors()
         }
     }
 }
+void Chunk::overwriteBorderHeights(const std::vector<double> &absoluteHeightsAbove, const std::vector<double> &absoluteHeightsBelow,
+                            const std::vector<double> &absoluteHeightsLeft, const std::vector<double> &absoluteHeightsRight)
+{
+    if(absoluteHeightsAbove.size() == pointsPerSide)
+    {
+        for(int i = 0; i < pointsPerSide; i++)
+        {
+            terrainPoints[i][0].y = absoluteHeightsAbove[i];
+        }
+    }
+    if(absoluteHeightsBelow.size() == pointsPerSide)
+    {
+        for(int i = 0; i < pointsPerSide; i++)
+        {
+            terrainPoints[i][pointsPerSide-1].y = absoluteHeightsBelow[i];
+        }
+    }
+    if(absoluteHeightsLeft.size() == pointsPerSide)
+    {
+        for(int j = 0; j < pointsPerSide; j++)
+        {
+            terrainPoints[0][j].y = absoluteHeightsLeft[j];
+        }
+    }
+    if(absoluteHeightsRight.size() == pointsPerSide)
+    {
+        for(int j = 0; j < pointsPerSide; j++)
+        {
+            terrainPoints[pointsPerSide-1][j].y = absoluteHeightsRight[j];
+        }
+    }
+}
+
+
+
+
+
 
 // Getters
 Point2D Chunk::getTopLeft() const
@@ -84,39 +126,71 @@ int Chunk::getChunkID()
 {
     return chunkID;
 }
-std::vector<double> Chunk::getTopTerrainHeights() const
+double Chunk::getPerlinSeed() const
+{
+    return perlinSeed;
+}
+std::vector<double> Chunk::getTopTerrainHeights(bool isRelative) const
 {
     std::vector<double> top;
     for(int i = 0; i < pointsPerSide; i++)
     {
-        top.push_back(terrainPoints[i][0].y / heightScaleFactor);
+        if(isRelative)
+        {
+            top.push_back(terrainPoints[i][0].y / (heightScaleFactor*2*perlinSeed));
+        }
+        else
+        {
+            top.push_back(terrainPoints[i][0].y);
+        }
     }
     return top;
 }
-std::vector<double> Chunk::getBottomTerrainHeights() const
+std::vector<double> Chunk::getBottomTerrainHeights(bool isRelative) const
 {
     std::vector<double> bottom;
     for(int i = 0; i < pointsPerSide; i++)
     {
-        bottom.push_back(terrainPoints[i][pointsPerSide-1].y / heightScaleFactor);
+        if(isRelative)
+        {
+            bottom.push_back(terrainPoints[i][pointsPerSide-1].y / (heightScaleFactor*2*perlinSeed));
+        }
+        else
+        {
+            bottom.push_back(terrainPoints[i][pointsPerSide-1].y);
+        }
     }
     return bottom;
 }
-std::vector<double> Chunk::getLeftTerrainHeights() const
+std::vector<double> Chunk::getLeftTerrainHeights(bool isRelative) const
 {
     std::vector<double> left;
     for(int j = 0; j < pointsPerSide; j++)
     {
-        left.push_back(terrainPoints[0][j].y / heightScaleFactor);
+        if(isRelative)
+        {
+            left.push_back(terrainPoints[0][j].y / (heightScaleFactor*2*perlinSeed));
+        }
+        else
+        {
+            left.push_back(terrainPoints[0][j].y);
+        }
     }
     return left;
 }
-std::vector<double> Chunk::getRightTerrainHeights() const
+std::vector<double> Chunk::getRightTerrainHeights(bool isRelative) const
 {
     std::vector<double> right;
     for(int j = 0; j < pointsPerSide; j++)
     {
-        right.push_back(terrainPoints[pointsPerSide-1][j].y / heightScaleFactor);
+        if(isRelative)
+        {
+            right.push_back(terrainPoints[pointsPerSide-1][j].y / (heightScaleFactor*2*perlinSeed));
+        }
+        else
+        {
+            right.push_back(terrainPoints[pointsPerSide-1][j].y);
+        }
     }
     return right;
 }
