@@ -32,7 +32,7 @@ void Chunk::initializeChunkID()
 }
 void Chunk::initializeTerrainPoints(std::vector<std::vector<double>> terrainHeights)
 {
-    int squareSize = sideLength / (pointsPerSide-1);
+    double squareSize = sideLength / (pointsPerSide-1.0);
     for(int i = 0; i < pointsPerSide; i++)
     {
         terrainPoints.emplace_back(std::vector<Point>());
@@ -89,7 +89,7 @@ std::vector<double> Chunk::getTopTerrainHeights() const
     std::vector<double> top;
     for(int i = 0; i < pointsPerSide; i++)
     {
-        top.push_back(terrainPoints[i][0].y);
+        top.push_back(terrainPoints[i][0].y / heightScaleFactor);
     }
     return top;
 }
@@ -98,7 +98,7 @@ std::vector<double> Chunk::getBottomTerrainHeights() const
     std::vector<double> bottom;
     for(int i = 0; i < pointsPerSide; i++)
     {
-        bottom.push_back(terrainPoints[i][pointsPerSide-1].y);
+        bottom.push_back(terrainPoints[i][pointsPerSide-1].y / heightScaleFactor);
     }
     return bottom;
 }
@@ -107,7 +107,7 @@ std::vector<double> Chunk::getLeftTerrainHeights() const
     std::vector<double> left;
     for(int j = 0; j < pointsPerSide; j++)
     {
-        left.push_back(terrainPoints[0][j].y);
+        left.push_back(terrainPoints[0][j].y / heightScaleFactor);
     }
     return left;
 }
@@ -116,14 +116,14 @@ std::vector<double> Chunk::getRightTerrainHeights() const
     std::vector<double> right;
     for(int j = 0; j < pointsPerSide; j++)
     {
-        right.push_back(terrainPoints[pointsPerSide-1][j].y);
+        right.push_back(terrainPoints[pointsPerSide-1][j].y / heightScaleFactor);
     }
     return right;
 }
 
 double Chunk::getHeightAt(Point p) const
 {
-    int squareSize = sideLength / (pointsPerSide-1);
+    double squareSize = sideLength / (pointsPerSide-1.0);
     int topLeftI = (p.x - topLeft.x*sideLength) / squareSize;
     int topLeftJ = (p.z - topLeft.z*sideLength) / squareSize;
     Point squareTopLeft = terrainPoints[topLeftI][topLeftJ];
@@ -171,4 +171,22 @@ void Chunk::draw() const
         glEnd();
     }
     glEnable(GL_CULL_FACE);
+    for(int i = 0; i < pointsPerSide; i++)
+    {
+        for(int j = 0; j < pointsPerSide; j++)
+        {
+            glBegin(GL_LINES);
+            if(terrainPoints[i][j].y < 0.1)
+            {
+                glColor4f(0.6,0,0.6,1);
+            }
+            else
+            {
+                glColor4f(1,1,0,1);
+            }
+            drawPoint(terrainPoints[i][j]);
+            glVertex3f(terrainPoints[i][j].x, 0, terrainPoints[i][j].z);
+            glEnd();
+        }
+    }
 }
