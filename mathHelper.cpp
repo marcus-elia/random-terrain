@@ -26,6 +26,17 @@ int isqrt(int n)
     return round(sqrt(n));
 }
 
+int mod(int a, int m)
+{
+    int x = a % m;
+    if(x < 0)
+    {
+        return x + m;
+    }
+    return x;
+}
+
+
 Point2D chunkIDtoPoint2D(int n)
 {
     int s = nearestPerfectSquare(n);

@@ -17,6 +17,9 @@ int nearestPerfectSquare(int n);
 // Returns the square root of n, assuming that n is a perfect square
 int isqrt(int n);
 
+// Need mod since % can return negatives. No.
+int mod(int a, int m);
+
 // Convert between chunkID's and Point2D's
 Point2D chunkIDtoPoint2D(int n);
 int point2DtoChunkID(Point2D p);
