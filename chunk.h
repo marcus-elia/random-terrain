@@ -18,6 +18,12 @@ private:
     Point2D topLeft;
     int sideLength;
 
+    int pointsPerSide;
+    std::vector<std::vector<Point>> terrainPoints;
+    // Store the normal vector of the plane containing each triangle
+    std::vector<std::vector<Point>> upperNormals;
+    std::vector<std::vector<Point>> lowerNormals;
+
     Point center;   // The actual center (y-coordinate = 0)
 
     // The number of the chunk based on its location
@@ -27,16 +33,26 @@ private:
 
 public:
     Chunk();
-    Chunk(Point2D inputTopLeft, int inputSideLength, RGBAcolor inputGroundColor);
+    Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide, RGBAcolor inputGroundColor, std::vector<std::vector<double>> terrainHeights);
 
     void initializeCenter();
     void initializeChunkID();
+    void initializeTerrainPoints(std::vector<std::vector<double>> terrainHeights);
+    void initializeNormalVectors();
 
     // Getters
     Point2D getTopLeft() const;
     int getSideLength() const;
     Point getCenter() const;
     int getChunkID();
+    std::vector<double> getTopTerrainHeights() const;
+    std::vector<double> getBottomTerrainHeights() const;
+    std::vector<double> getLeftTerrainHeights() const;
+    std::vector<double> getRightTerrainHeights() const;
+
+    // Returns the height of the terrain at the given point,
+    // assuming that the point is in this chunk
+    double getHeightAt(Point p) const;
 
     void draw() const;
 };
