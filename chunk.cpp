@@ -32,14 +32,15 @@ void Chunk::initializeChunkID()
 }
 void Chunk::initializeTerrainPoints(std::vector<std::vector<double>> terrainHeights)
 {
+    int squareSize = sideLength / (pointsPerSide-1);
     for(int i = 0; i < pointsPerSide; i++)
     {
         terrainPoints.emplace_back(std::vector<Point>());
         for(int j = 0; j < pointsPerSide; j++)
         {
-            double x = center.x - sideLength/2 + i*pointsPerSide;
+            double x = center.x - sideLength/2 + i*squareSize;
             double y = terrainHeights[i][j]*heightScaleFactor;
-            double z = center.z - sideLength/2 + j*pointsPerSide;
+            double z = center.z - sideLength/2 + j*squareSize;
             terrainPoints[i].push_back({x, y, z});
         }
     }
@@ -122,7 +123,7 @@ std::vector<double> Chunk::getRightTerrainHeights() const
 
 double Chunk::getHeightAt(Point p) const
 {
-    int squareSize = sideLength / pointsPerSide;
+    int squareSize = sideLength / (pointsPerSide-1);
     int topLeftI = (p.x - topLeft.x*sideLength) / squareSize;
     int topLeftJ = (p.z - topLeft.z*sideLength) / squareSize;
     Point squareTopLeft = terrainPoints[topLeftI][topLeftJ];
@@ -155,11 +156,19 @@ double Chunk::getHeightAt(Point p) const
 
 void Chunk::draw() const
 {
+    glDisable(GL_CULL_FACE);
     setGLColor(groundColor);
-    glBegin(GL_QUADS);
-    glVertex3f(center.x - sideLength/2, 0, center.z - sideLength/2);
-    glVertex3f(center.x - sideLength/2, 0, center.z + sideLength/2);
-    glVertex3f(center.x + sideLength/2, 0, center.z + sideLength/2);
-    glVertex3f(center.x + sideLength/2, 0, center.z - sideLength/2);
-    glEnd();
+    for(int j = 0; j < pointsPerSide - 1; j++)
+    {
+        glBegin(GL_TRIANGLE_STRIP);
+        drawPoint(terrainPoints[0][j]);
+        drawPoint(terrainPoints[0][j+1]);
+        for(int i = 1; i < pointsPerSide; i++)
+        {
+            drawPoint(terrainPoints[i][j]);
+            drawPoint(terrainPoints[i][j+1]);
+        }
+        glEnd();
+    }
+    glEnable(GL_CULL_FACE);
 }

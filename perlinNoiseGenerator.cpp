@@ -71,7 +71,7 @@ void PerlinNoiseGenerator::setBorders(std::vector<double> topInput, std::vector<
     {
         for(int j = 0; j < height; j++)
         {
-            noiseSeed[width-1][j] = leftInput[j];
+            noiseSeed[width-1][j] = rightInput[j];
         }
     }
 }
