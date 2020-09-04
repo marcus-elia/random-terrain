@@ -4,7 +4,7 @@ GameManager::GameManager()
 {
     screenWidth = 1024;
     screenHeight = 512;
-    renderRadius = 1;
+    renderRadius = 5;
 
     initializePlayer();
     updateCurrentChunks();
@@ -133,7 +133,11 @@ void GameManager::setCurrentStatus(GameStatus input)
     currentStatus = input;
 }
 
-// Chunks
+// =============================
+//
+//           Chunks
+//
+// ============================
 void GameManager::updateCurrentChunks()
 {
     // Update the list of current chunks
@@ -334,6 +338,7 @@ void GameManager::playerTick()
         currentPlayerChunkID = newPlayerChunkID;
         updateCurrentChunks();
     }
+    player.setCurrentTerrainHeight(allSeenChunks[currentPlayerChunkID]->getHeightAt(player.getLocation()));
 }
 
 // Game Management

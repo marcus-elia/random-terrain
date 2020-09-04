@@ -23,6 +23,7 @@ private:
     double jumpAmount;
     double gravity;
     bool isGrounded;
+    double currentTerrainHeight; // The height of the ground beneath the player
 
     double sensitivity; // turning speed for mouse movement
 
@@ -63,6 +64,7 @@ public:
     void setSensitivity(double inputSensitivity);
     void setXZAngle(double inputXZAngle);
     void setYAngle(double inputYAngle);
+    void setCurrentTerrainHeight(double inputTerrainHeight);
 
     // Movement
 

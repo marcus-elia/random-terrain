@@ -129,6 +129,10 @@ void Player::setYAngle(double inputYAngle)
 {
     yAngle = inputYAngle;
 }
+void Player::setCurrentTerrainHeight(double inputTerrainHeight)
+{
+    currentTerrainHeight = inputTerrainHeight;
+}
 
 // ===============================
 //
@@ -148,10 +152,10 @@ void Player::move()
 
 void Player::correctGround()
 {
-    if(location.y < height/2)
+    if(location.y < currentTerrainHeight + height/2)
     {
-        lookingAt.y += height/2 - location.y;
-        location.y = height/2;
+        lookingAt.y += currentTerrainHeight + height/2 - location.y;
+        location.y = currentTerrainHeight + height/2;
         isGrounded = true;
         velocity.y = 0;
     }
@@ -162,6 +166,14 @@ void Player::applyGravity()
     if(!isGrounded)
     {
         velocity.y += gravity;
+    }
+    else
+    {
+        // If we moved and the terrain became lower, we need to fall down
+        if(location.y > currentTerrainHeight + height/2)
+        {
+            isGrounded = false;
+        }
     }
 }
 
