@@ -19,6 +19,7 @@ private:
     int sideLength;
 
     int pointsPerSide;
+    double heightScaleFactor;
     std::vector<std::vector<Point>> terrainPoints;
     // Store the normal vector of the plane containing each triangle
     std::vector<std::vector<Point>> upperNormals;
@@ -33,7 +34,8 @@ private:
 
 public:
     Chunk();
-    Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide, RGBAcolor inputGroundColor, std::vector<std::vector<double>> terrainHeights);
+    Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide, RGBAcolor inputGroundColor,
+            std::vector<std::vector<double>> terrainHeights, double inputHeightScaleFactor);
 
     void initializeCenter();
     void initializeChunkID();

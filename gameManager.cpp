@@ -157,7 +157,7 @@ void GameManager::updateCurrentChunks()
             PerlinNoiseGenerator png = PerlinNoiseGenerator(POINTS_PER_CHUNK, POINTS_PER_CHUNK, 1,
                     getTerrainHeightsAbove(index), getTerrainHeightsBelow(index),
                     getTerrainHeightsLeft(index), getTerrainHeightsRight(index));
-            allSeenChunks[index] = std::make_shared<Chunk>(p, CHUNK_SIZE, newColor, png.getPerlinNoise());
+            allSeenChunks[index] = std::make_shared<Chunk>(p, CHUNK_SIZE, newColor, png.getPerlinNoise(), TERRAIN_HEIGHT_FACTOR);
         }
         currentChunks.push_back(allSeenChunks[index]);
     }

@@ -9,11 +9,12 @@ Chunk::Chunk()
     initializeChunkID();
 }
 Chunk::Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide, RGBAcolor inputGroundColor,
-        std::vector<std::vector<double>> terrainHeights)
+        std::vector<std::vector<double>> terrainHeights, double inputHeightScaleFactor)
 {
     topLeft = inputTopLeft;
     sideLength = inputSideLength;
     pointsPerSide = inputPointsPerSide;
+    heightScaleFactor = inputHeightScaleFactor;
     groundColor = inputGroundColor;
     initializeCenter();
     initializeChunkID();
@@ -37,8 +38,9 @@ void Chunk::initializeTerrainPoints(std::vector<std::vector<double>> terrainHeig
         for(int j = 0; j < pointsPerSide; j++)
         {
             double x = center.x - sideLength/2 + i*pointsPerSide;
+            double y = terrainHeights[i][j]*heightScaleFactor;
             double z = center.z - sideLength/2 + j*pointsPerSide;
-            terrainPoints[i].push_back({x, terrainHeights[i][j], z});
+            terrainPoints[i].push_back({x, y, z});
         }
     }
 }
