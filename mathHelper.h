@@ -39,4 +39,8 @@ std::vector<Point2D> getChunkTopLeftCornersAroundPoint(int chunkID, int radius);
 
 int getChunkIDContainingPoint(Point p, int chunkSize);
 
+// Vector functions
+double dotProduct(Point p1, Point p2);
+Point crossProduct(Point p1, Point p2);
+
 #endif //RANDOM_TERRAIN_MATHHELPER_H

@@ -142,3 +142,12 @@ int getChunkIDContainingPoint(Point p, int chunkSize)
     int z = floor(p.z / chunkSize);
     return point2DtoChunkID({x, z});
 }
+
+double dotProduct(Point p1, Point p2)
+{
+    return p1.x*p2.x + p1.y*p2.y + p1.z*p2.z;
+}
+Point crossProduct(Point p1, Point p2)
+{
+    return {p1.y*p2.z - p1.z*p2.y, p2.x*p1.z - p1.x*p2.z, p1.x*p2.y - p1.y*p2.x};
+}
