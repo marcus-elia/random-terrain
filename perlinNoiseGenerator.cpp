@@ -174,7 +174,10 @@ void PerlinNoiseGenerator::scaleNoise(double minValue, double maxValue)
     {
         for(int i = 0; i < vec.size(); i++)
         {
+            // Scale between 0 and 1
             vec[i] = (vec[i] - a) / (b - a);
+            // Scale between minvalue and maxvalue
+            vec[i] = (maxValue - minValue)*vec[i] + minValue;
         }
     }
 }
