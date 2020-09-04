@@ -4,7 +4,7 @@ GameManager::GameManager()
 {
     screenWidth = 1024;
     screenHeight = 512;
-    renderRadius = 5;
+    renderRadius = 1;
 
     initializePlayer();
     updateCurrentChunks();
@@ -157,7 +157,10 @@ void GameManager::updateCurrentChunks()
             PerlinNoiseGenerator png = PerlinNoiseGenerator(POINTS_PER_CHUNK, POINTS_PER_CHUNK, 1,
                     getTerrainHeightsAbove(index), getTerrainHeightsBelow(index),
                     getTerrainHeightsLeft(index), getTerrainHeightsRight(index));
-            allSeenChunks[index] = std::make_shared<Chunk>(p, CHUNK_SIZE, POINTS_PER_CHUNK, newColor, png.getPerlinNoise(), TERRAIN_HEIGHT_FACTOR);
+            std::vector<std::vector<double>> noise = png.getScaledNoiseApplyBorders(0,1,
+                    getTerrainHeightsAbove(index), getTerrainHeightsBelow(index),
+                    getTerrainHeightsLeft(index), getTerrainHeightsRight(index));
+            allSeenChunks[index] = std::make_shared<Chunk>(p, CHUNK_SIZE, POINTS_PER_CHUNK, newColor, noise, TERRAIN_HEIGHT_FACTOR);
         }
         currentChunks.push_back(allSeenChunks[index]);
     }

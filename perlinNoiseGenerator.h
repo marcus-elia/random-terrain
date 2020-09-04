@@ -40,8 +40,12 @@ public:
 
     // Linearly scales the perlin noise so that the smallest in the 2d array becomes minvalue
     // and the highest becomes maxvalue
-    void scaleNoise(double minValue, double maxValue);
+    std::vector<std::vector<double>> getScaledNoise(double minValue, double maxValue) const;
+    // Same thing, but with borders enforced
+    std::vector<std::vector<double>> getScaledNoiseApplyBorders(double minValue, double maxValue,
+                                    std::vector<double> topInput={}, std::vector<double> bottomInput={},
+                                    std::vector<double> leftInput={}, std::vector<double> rightInput={}) const;
 
-    std::vector<std::vector<double>> getPerlinNoise();
+    std::vector<std::vector<double>> getPerlinNoise() const;
 };
 #endif //RANDOM_TERRAIN_PERLINNOISEGENERATOR_H

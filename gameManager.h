@@ -47,7 +47,7 @@ private:
     RGBAcolor CHUNK_GROUND_COLOR = {0, 1, 0, 1};
     int CHUNK_SIZE = 512;
     int POINTS_PER_CHUNK = 8;
-    double TERRAIN_HEIGHT_FACTOR = 40;
+    double TERRAIN_HEIGHT_FACTOR = 80;
     double PLAYER_HEIGHT = 20;
     double PLAYER_RADIUS = 5;
     double PLAYER_SPEED = 2;

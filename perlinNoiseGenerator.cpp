@@ -8,7 +8,6 @@ PerlinNoiseGenerator::PerlinNoiseGenerator()
     fillNoiseSeed();
     perlinNoise = calculatePerlinNoise2D(width, height, noiseSeed,
                                          (int)floor(log(width)));
-    scaleNoise(0,1);
 }
 PerlinNoiseGenerator::PerlinNoiseGenerator(int inputWidth, int inputHeight, double inputBias,
         std::vector<double> topInput, std::vector<double> bottomInput,
@@ -24,7 +23,6 @@ PerlinNoiseGenerator::PerlinNoiseGenerator(int inputWidth, int inputHeight, doub
     fillNoiseSeed(topInput, bottomInput, leftInput, rightInput);
     perlinNoise = calculatePerlinNoise2D(width, height, noiseSeed,
                                          (int)floor(log(width)));
-    scaleNoise(0,1);
     setBorders(topInput, bottomInput, leftInput, rightInput);
 }
 
@@ -143,16 +141,18 @@ std::vector<std::vector<double>> PerlinNoiseGenerator::calculatePerlinNoise2D(in
     return output;
 }
 
-void PerlinNoiseGenerator::scaleNoise(double minValue, double maxValue)
+std::vector<std::vector<double>> PerlinNoiseGenerator::getScaledNoise(double minValue, double maxValue) const
 {
+    // a and b will be the min and max in the raw perlinNoise array
     double a = 1;
     double b = 0;
 
     // Iterate through to find smallest and largest
-    for(std::vector<double> &vec : perlinNoise)
+    for(int i = 0; i < width; i++)
     {
-        for(double d : vec)
+        for(int j = 0; j < height; j++)
         {
+            double d = perlinNoise[i][j];
             if(d < a)
             {
                 a = d;
@@ -166,23 +166,63 @@ void PerlinNoiseGenerator::scaleNoise(double minValue, double maxValue)
     // In the rare case of division by zero, don't do anything
     if(a == b)
     {
-        return;
+        return perlinNoise;
     }
 
+    std::vector<std::vector<double>> scaled;
     // Iterate through again, and scale each value
-    for(std::vector<double> &vec : perlinNoise)
+    for(int i = 0; i < width; i++)
     {
-        for(int i = 0; i < vec.size(); i++)
+        scaled.emplace_back(std::vector<double>());
+        for(int j = 0; j < height; j++)
         {
+            double val = perlinNoise[i][j];
             // Scale between 0 and 1
-            vec[i] = (vec[i] - a) / (b - a);
+            val = (val - a) / (b - a);
             // Scale between minvalue and maxvalue
-            vec[i] = (maxValue - minValue)*vec[i] + minValue;
+            scaled[i].push_back((maxValue - minValue)*val + minValue);
         }
     }
+    return scaled;
 }
 
-std::vector<std::vector<double>> PerlinNoiseGenerator::getPerlinNoise()
+std::vector<std::vector<double>> PerlinNoiseGenerator::getScaledNoiseApplyBorders(double minValue, double maxValue,
+        std::vector<double> topInput, std::vector<double> bottomInput,
+        std::vector<double> leftInput, std::vector<double> rightInput) const
+{
+    std::vector<std::vector<double>> scaled = getScaledNoise(minValue, maxValue);
+    if(topInput.size() == width)
+    {
+        for(int i = 0; i < width; i++)
+        {
+            scaled[i][0] = topInput[i];
+        }
+    }
+    if(bottomInput.size() == width)
+    {
+        for(int i = 0; i < width; i++)
+        {
+            scaled[i][height-1] = bottomInput[i];
+        }
+    }
+    if(leftInput.size() == height)
+    {
+        for(int j = 0; j < height; j++)
+        {
+            scaled[0][j] = leftInput[j];
+        }
+    }
+    if(rightInput.size() == height)
+    {
+        for(int j = 0; j < height; j++)
+        {
+            scaled[width-1][j] = rightInput[j];
+        }
+    }
+    return scaled;
+}
+
+std::vector<std::vector<double>> PerlinNoiseGenerator::getPerlinNoise() const
 {
     return perlinNoise;
 }
