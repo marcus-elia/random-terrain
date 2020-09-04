@@ -151,15 +151,6 @@ void GameManager::updateCurrentChunks()
         if(allSeenChunks.count(index) == 0) // if the chunk has never been seen before
         {
             // Create and add a new Chunk
-            RGBAcolor newColor;
-            if((p.x + p.z) % 2 == 0)
-            {
-                newColor = CHUNK_GROUND_COLOR;
-            }
-            else
-            {
-                newColor = {0, 0.6, 0, 1};
-            }
             // Get the borders to make sure the terrain is seamless
             std::vector<double> relativeHeightsAbove = getTerrainHeightsAbove(index, true);
             std::vector<double> relativeHeightsBelow = getTerrainHeightsBelow(index, true);
@@ -169,7 +160,7 @@ void GameManager::updateCurrentChunks()
             std::vector<double> absoluteHeightsBelow = getTerrainHeightsBelow(index, false);
             std::vector<double> absoluteHeightsLeft = getTerrainHeightsLeft(index, false);
             std::vector<double> absoluteHeightsRight = getTerrainHeightsRight(index, false);
-            // Make a generator for this chunk specfically
+            // Make a generator for this chunk specifically
             PerlinNoiseGenerator png = PerlinNoiseGenerator(POINTS_PER_CHUNK, POINTS_PER_CHUNK, 1,
                                                             relativeHeightsAbove, relativeHeightsBelow,
                                                             relativeHeightsLeft, relativeHeightsRight);
@@ -178,7 +169,7 @@ void GameManager::updateCurrentChunks()
                                                             relativeHeightsAbove, relativeHeightsBelow,
                                                             relativeHeightsLeft, relativeHeightsRight);
             // Create the chunk
-            allSeenChunks[index] = std::make_shared<Chunk>(p, CHUNK_SIZE, POINTS_PER_CHUNK, newColor, noise,
+            allSeenChunks[index] = std::make_shared<Chunk>(p, CHUNK_SIZE, POINTS_PER_CHUNK, CHUNK_GROUND_COLOR, noise,
                     TERRAIN_HEIGHT_FACTOR, getPerlinValue(p), absoluteHeightsAbove, absoluteHeightsBelow,
                                                            absoluteHeightsLeft, absoluteHeightsRight);
         }

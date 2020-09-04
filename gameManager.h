@@ -55,7 +55,7 @@ private:
     double MOUSE_SENSITIVITY = 0.03;
     int MAX_DISTANCE_FROM_SPAWN = 10240; // 10 chunks
     double GRAVITY = -0.5;
-    double PLAYER_JUMP_AMOUNT = 4;
+    double PLAYER_JUMP_AMOUNT = 6;
     int BUTTON_WIDTH = 128;
     int BUTTON_HEIGHT = 64;
     int BUTTON_RADIUS = 16;

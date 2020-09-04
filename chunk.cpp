@@ -231,22 +231,23 @@ double Chunk::getHeightAt(Point p) const
 void Chunk::draw() const
 {
     glDisable(GL_CULL_FACE);
-    setGLColor(groundColor);
+    double r,g,b,a;
+    a = 1.0;
     for(int j = 0; j < pointsPerSide - 1; j++)
     {
-        if(j % 2 == 0)
-        {
-            setGLColor(groundColor);
-        }
-        else
-        {
-            glColor4f(0,1,1,1);
-        }
+        r = groundColor.r*terrainPoints[0][j].y/(2*heightScaleFactor);
+        g = groundColor.g*terrainPoints[0][j].y/(2*heightScaleFactor);
+        b = groundColor.b*terrainPoints[0][j].y/(2*heightScaleFactor);
+        glColor4f(r,g,b,a);
         glBegin(GL_TRIANGLE_STRIP);
         drawPoint(terrainPoints[0][j]);
         drawPoint(terrainPoints[0][j+1]);
         for(int i = 1; i < pointsPerSide; i++)
         {
+            r = groundColor.r*terrainPoints[i][j].y/(2*heightScaleFactor);
+            g = groundColor.g*terrainPoints[i][j].y/(2*heightScaleFactor);
+            b = groundColor.b*terrainPoints[i][j].y/(2*heightScaleFactor);
+            glColor4f(r,g,b,a);
             drawPoint(terrainPoints[i][j]);
             drawPoint(terrainPoints[i][j+1]);
         }
