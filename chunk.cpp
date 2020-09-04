@@ -11,13 +11,16 @@ Chunk::Chunk()
 Chunk::Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide, RGBAcolor inputGroundColor,
         std::vector<std::vector<double>> terrainHeights, double inputHeightScaleFactor, double inputPerlinSeed,
              const std::vector<double> &absoluteHeightsAbove, const std::vector<double> &absoluteHeightsBelow,
-             const std::vector<double> &absoluteHeightsLeft, const std::vector<double> &absoluteHeightsRight)
+             const std::vector<double> &absoluteHeightsLeft, const std::vector<double> &absoluteHeightsRight,
+             double inputSnowLimit, RGBAcolor inputSnowColor)
 {
     topLeft = inputTopLeft;
     sideLength = inputSideLength;
     pointsPerSide = inputPointsPerSide;
     heightScaleFactor = inputHeightScaleFactor;
     groundColor = inputGroundColor;
+    snowLimit = inputSnowLimit;
+    snowColor = inputSnowColor;
     perlinSeed = inputPerlinSeed > 0 ? inputPerlinSeed : 0.1; // can't be zero, gets divided by
     initializeCenter();
     initializeChunkID();
@@ -235,27 +238,39 @@ double Chunk::absoluteToRelativeHeight(double y) const
 
 
 
-
+RGBAcolor Chunk::chooseColor(double y) const
+{
+    double r,g,b;
+    RGBAcolor currentColor;
+    if(y > snowLimit)
+    {
+        currentColor = snowColor;
+    }
+    else
+    {
+        currentColor = groundColor;
+    }
+    r = currentColor.r*absoluteToRelativeHeight(y);
+    g = currentColor.g*absoluteToRelativeHeight(y);
+    b = currentColor.b*absoluteToRelativeHeight(y);
+    return {r, g, b,1.0};
+}
 void Chunk::draw() const
 {
     glDisable(GL_CULL_FACE);
-    double r,g,b,a;
-    a = 1.0;
+    glShadeModel( GL_FLAT );
+    RGBAcolor currentColor;
     for(int j = 0; j < pointsPerSide - 1; j++)
     {
-        r = groundColor.r*terrainPoints[0][j].y/(2*heightScaleFactor);
-        g = groundColor.g*terrainPoints[0][j].y/(2*heightScaleFactor);
-        b = groundColor.b*terrainPoints[0][j].y/(2*heightScaleFactor);
-        glColor4f(r,g,b,a);
+        currentColor = chooseColor(terrainPoints[0][j].y);
+        setGLColor(currentColor);
         glBegin(GL_TRIANGLE_STRIP);
         drawPoint(terrainPoints[0][j]);
         drawPoint(terrainPoints[0][j+1]);
         for(int i = 1; i < pointsPerSide; i++)
         {
-            r = groundColor.r*terrainPoints[i][j].y/(2*heightScaleFactor);
-            g = groundColor.g*terrainPoints[i][j].y/(2*heightScaleFactor);
-            b = groundColor.b*terrainPoints[i][j].y/(2*heightScaleFactor);
-            glColor4f(r,g,b,a);
+            currentColor = chooseColor(terrainPoints[i][j].y);
+            setGLColor(currentColor);
             drawPoint(terrainPoints[i][j]);
             drawPoint(terrainPoints[i][j+1]);
         }

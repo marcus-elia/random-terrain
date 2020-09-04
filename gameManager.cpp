@@ -171,7 +171,8 @@ void GameManager::updateCurrentChunks()
             // Create the chunk
             allSeenChunks[index] = std::make_shared<Chunk>(p, CHUNK_SIZE, POINTS_PER_CHUNK, CHUNK_GROUND_COLOR, noise,
                     TERRAIN_HEIGHT_FACTOR, getPerlinValue(p), absoluteHeightsAbove, absoluteHeightsBelow,
-                                                           absoluteHeightsLeft, absoluteHeightsRight);
+                                                           absoluteHeightsLeft, absoluteHeightsRight,
+                                                           SNOW_LIMIT, SNOW_COLOR);
         }
         currentChunks.push_back(allSeenChunks[index]);
     }

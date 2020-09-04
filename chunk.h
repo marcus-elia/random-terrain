@@ -32,6 +32,8 @@ private:
     // The number of the chunk based on its location
     int chunkID;
 
+    double snowLimit; // draw snow above here
+    RGBAcolor snowColor;
     RGBAcolor groundColor;
 
 public:
@@ -39,7 +41,8 @@ public:
     Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide, RGBAcolor inputGroundColor,
           std::vector<std::vector<double>> terrainHeights, double inputHeightScaleFactor, double inputPerlinSeed,
           const std::vector<double> &absoluteHeightsAbove, const std::vector<double> &absoluteHeightsBelow,
-          const std::vector<double> &absoluteHeightsLeft, const std::vector<double> &absoluteHeightsRight);
+          const std::vector<double> &absoluteHeightsLeft, const std::vector<double> &absoluteHeightsRight,
+          double inputSnowLimit, RGBAcolor inputSnowColor);
 
     void initializeCenter();
     void initializeChunkID();
@@ -68,6 +71,7 @@ public:
     double relativeToAbsoluteHeight(double y) const;
     double absoluteToRelativeHeight(double y) const;
 
+    RGBAcolor chooseColor(double y) const;
     void draw() const;
 };
 

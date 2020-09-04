@@ -46,9 +46,11 @@ private:
     // Game parameters
     RGBAcolor CHUNK_GROUND_COLOR = {0, 1, 0, 1};
     int CHUNK_SIZE = 512;
-    int POINTS_PER_CHUNK = 12;
+    int POINTS_PER_CHUNK = 20;
     int PERLIN_SEED_SIZE = 10;
     double TERRAIN_HEIGHT_FACTOR = 200;
+    double SNOW_LIMIT = 350;
+    RGBAcolor SNOW_COLOR = {1, 0.9, 1, 1.0};
     double PLAYER_HEIGHT = 20;
     double PLAYER_RADIUS = 5;
     double PLAYER_SPEED = 2;
