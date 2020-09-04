@@ -10,6 +10,7 @@
 #include "chunk.h"
 #include "mathHelper.h"
 #include "button.h"
+#include "perlinNoiseGenerator.h"
 
 enum GameStatus {Intro, Playing, End, Paused};
 
@@ -97,6 +98,13 @@ public:
 
     // Chunks
     void updateCurrentChunks();
+    // If the specified adjacent chunk has been created already, then
+    // this returns the relevant border of terrain points.
+    // Otherwise, returns empty vector
+    std::vector<double> getTerrainHeightsAbove(int chunkID) const;
+    std::vector<double> getTerrainHeightsBelow(int chunkID) const;
+    std::vector<double> getTerrainHeightsLeft(int chunkID) const;
+    std::vector<double> getTerrainHeightsRight(int chunkID) const;
 
     // Camera
     Point getCameraLocation() const;

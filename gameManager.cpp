@@ -154,9 +154,60 @@ void GameManager::updateCurrentChunks()
             {
                 newColor = {0, 0.6, 0, 1};
             }
-            allSeenChunks[index] = std::make_shared<Chunk>(p, CHUNK_SIZE, newColor);
+            PerlinNoiseGenerator png = PerlinNoiseGenerator(POINTS_PER_CHUNK, POINTS_PER_CHUNK, 1,
+                    getTerrainHeightsAbove(index), getTerrainHeightsBelow(index),
+                    getTerrainHeightsLeft(index), getTerrainHeightsRight(index));
+            allSeenChunks[index] = std::make_shared<Chunk>(p, CHUNK_SIZE, newColor, png.getPerlinNoise());
         }
         currentChunks.push_back(allSeenChunks[index]);
+    }
+}
+std::vector<double> GameManager::getTerrainHeightsAbove(int chunkID) const
+{
+    int aboveID = getChunkIDAbove(chunkID);
+    if(allSeenChunks.count(aboveID) > 0)
+    {
+        return allSeenChunks.at(aboveID)->getBottomTerrainHeights();
+    }
+    else
+    {
+        return std::vector<double>();
+    }
+}
+std::vector<double> GameManager::getTerrainHeightsBelow(int chunkID) const
+{
+    int aboveID = getChunkIDBelow(chunkID);
+    if(allSeenChunks.count(aboveID) > 0)
+    {
+        return allSeenChunks.at(aboveID)->getTopTerrainHeights();
+    }
+    else
+    {
+        return std::vector<double>();
+    }
+}
+std::vector<double> GameManager::getTerrainHeightsLeft(int chunkID) const
+{
+    int aboveID = getChunkIDLeft(chunkID);
+    if(allSeenChunks.count(aboveID) > 0)
+    {
+        return allSeenChunks.at(aboveID)->getRightTerrainHeights();
+    }
+    else
+    {
+        return std::vector<double>();
+    }
+}
+std::vector<double> GameManager::getTerrainHeightsRight(int chunkID) const
+{
+    int aboveID = getChunkIDRight(chunkID);
+    if(allSeenChunks.count(aboveID) > 0)
+    {
+        return allSeenChunks.at(aboveID)->getLeftTerrainHeights();
+    }
+    else
+    {
+        return std::vector<double>();
     }
 }
 
