@@ -140,7 +140,7 @@ double Chunk::getHeightAt(Point p) const
     }
     else
     {
-        Point normal = lowerNormals[topLeftI+1][topLeftJ+1];
+        Point normal = lowerNormals[topLeftI][topLeftJ];
         double b = normal.y;
         if(b != 0)
         {
@@ -160,6 +160,14 @@ void Chunk::draw() const
     setGLColor(groundColor);
     for(int j = 0; j < pointsPerSide - 1; j++)
     {
+        if(j % 2 == 0)
+        {
+            setGLColor(groundColor);
+        }
+        else
+        {
+            glColor4f(0,1,1,1);
+        }
         glBegin(GL_TRIANGLE_STRIP);
         drawPoint(terrainPoints[0][j]);
         drawPoint(terrainPoints[0][j+1]);
@@ -171,22 +179,4 @@ void Chunk::draw() const
         glEnd();
     }
     glEnable(GL_CULL_FACE);
-    for(int i = 0; i < pointsPerSide; i++)
-    {
-        for(int j = 0; j < pointsPerSide; j++)
-        {
-            glBegin(GL_LINES);
-            if(terrainPoints[i][j].y < 0.1)
-            {
-                glColor4f(0.6,0,0.6,1);
-            }
-            else
-            {
-                glColor4f(1,1,0,1);
-            }
-            drawPoint(terrainPoints[i][j]);
-            glVertex3f(terrainPoints[i][j].x, 0, terrainPoints[i][j].z);
-            glEnd();
-        }
-    }
 }
