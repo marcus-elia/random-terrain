@@ -85,6 +85,32 @@ int point2DtoChunkID(Point2D p)
     }
 }
 
+int getChunkIDAbove(int chunkID)
+{
+    Point2D p = chunkIDtoPoint2D(chunkID);
+    p.z -= 1;
+    return point2DtoChunkID(p);
+}
+int getChunkIDBelow(int chunkID)
+{
+    Point2D p = chunkIDtoPoint2D(chunkID);
+    p.z += 1;
+    return point2DtoChunkID(p);
+}
+int getChunkIDLeft(int chunkID)
+{
+    Point2D p = chunkIDtoPoint2D(chunkID);
+    p.x -= 1;
+    return point2DtoChunkID(p);
+}
+int getChunkIDRight(int chunkID)
+{
+    Point2D p = chunkIDtoPoint2D(chunkID);
+    p.x += 1;
+    return point2DtoChunkID(p);
+}
+
+
 double distance2d(Point p1, Point p2)
 {
     return distanceFormula(p1.x, p1.z, p2.x, p2.z);
