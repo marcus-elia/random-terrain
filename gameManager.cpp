@@ -61,8 +61,9 @@ void GameManager::initializeButtons()
 
 void GameManager::makeInstructions()
 {
-    instructions.push_back("Use w,a,s,d to move and spacebar to jump. Press p to pause.");
-    instructions.push_back("Hold e in addition to w,a,s, or d to go fast.");
+    instructions.emplace_back("Use w,a,s,d to move and spacebar to jump. Press p to pause.");
+    instructions.emplace_back("Hold e in addition to w,a,s, or d to go fast.");
+    instructions.emplace_back("When paused, click the green button to cycle through the different color schemes.");
 }
 
 // ===========================
@@ -370,7 +371,7 @@ void GameManager::playerTick()
     {
         for(int i = 0; i < HYPER_SPEED_FACTOR; i++)
         {
-            player.move();
+            player.moveXZ();
         }
     }
 

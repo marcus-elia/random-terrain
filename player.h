@@ -67,8 +67,8 @@ public:
     void setCurrentTerrainHeight(double inputTerrainHeight);
 
     // Movement
-
     void move();
+    void moveXZ(); // only use the x and z velocity components
 
     // Keep the Player from going through the ground
     void correctGround();

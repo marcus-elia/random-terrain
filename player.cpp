@@ -142,10 +142,14 @@ void Player::setCurrentTerrainHeight(double inputTerrainHeight)
 
 void Player::move()
 {
-    location.x += velocity.x;
-    lookingAt.x += velocity.x;
+    moveXZ();
     location.y += velocity.y;
     lookingAt.y += velocity.y;
+}
+void Player::moveXZ()
+{
+    location.x += velocity.x;
+    lookingAt.x += velocity.x;
     location.z += velocity.z;
     lookingAt.z += velocity.z;
 }
