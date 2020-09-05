@@ -26,7 +26,7 @@ file(GLOB SOURCE_FILES
         *.h
         )
 
-add_executable(graphics graphics.h graphics.cpp gameManager.cpp gameManager.h structs.h button.cpp button.h mathHelper.cpp mathHelper.h chunk.cpp chunk.h player.cpp player.h perlinNoiseGenerator.cpp perlinNoiseGenerator.h randomNumberGenerator.cpp randomNumberGenerator.h)
+add_executable(graphics graphics.h graphics.cpp gameManager.cpp gameManager.h structs.h button.cpp button.h mathHelper.cpp mathHelper.h chunk.cpp chunk.h player.cpp player.h perlinNoiseGenerator.cpp perlinNoiseGenerator.h randomNumberGenerator.cpp randomNumberGenerator.h solid.cpp solid.h)
 
 if (WIN32)
     target_link_libraries (graphics ${OPENGL_LIBRARIES} freeglut)
