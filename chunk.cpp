@@ -151,6 +151,7 @@ void Chunk::initializeSquareTerrainType()
 void Chunk::initializeSquareColors()
 {
     RGBAcolor color;
+    squareColors = std::vector<std::vector<RGBAcolor>>();
     for(int i = 0; i < pointsPerSide - 1; i++)
     {
         squareColors.emplace_back(std::vector<RGBAcolor>());

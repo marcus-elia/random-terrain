@@ -5,8 +5,10 @@ GameManager::GameManager()
     screenWidth = 1024;
     screenHeight = 512;
     renderRadius = 5;
-    chunkSeeds = PerlinNoiseGenerator(PERLIN_SEED_SIZE, PERLIN_SEED_SIZE, 1);
+    chunkSeeds = PerlinNoiseGenerator(PERLIN_SEED_SIZE, PERLIN_SEED_SIZE, 0.2);
+    curColorScheme = Plain;
 
+    updateColorScheme(Plain);
     initializePlayer();
     updateCurrentChunks();
     initializeButtons();
@@ -18,7 +20,9 @@ GameManager::GameManager(int inputScreenWidth, int inputScreenHeight, int inputR
     screenHeight = inputScreenHeight;
     renderRadius = inputRenderRadius;
     chunkSeeds = PerlinNoiseGenerator(PERLIN_SEED_SIZE, PERLIN_SEED_SIZE, 0.2);
+    curColorScheme = Plain;
 
+    updateColorScheme(Plain);
     initializePlayer();
     updateCurrentChunks();
     initializeButtons();
@@ -51,6 +55,8 @@ void GameManager::initializeButtons()
                             BUTTON_RADIUS, "Continue", PLAY_BUTTON_COLOR, BUTTON_TEXT_COLOR, PLAY_BUTTON_COLOR_H);
     quitButton = Button(screenWidth/2, screenHeight/2 - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT,
                         BUTTON_RADIUS, "Quit", QUIT_BUTTON_COLOR, BUTTON_TEXT_COLOR, QUIT_BUTTON_COLOR_H);
+    cycleColorsButton = Button(screenWidth/2, screenHeight/2 - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT,
+                        BUTTON_RADIUS, "Cycle Colors", CYCLE_BUTTON_COLOR, BUTTON_TEXT_COLOR, CYCLE_BUTTON_COLOR_H);
 }
 
 void GameManager::makeInstructions()
@@ -178,7 +184,7 @@ void GameManager::updateCurrentChunks()
                     TERRAIN_HEIGHT_FACTOR, getPerlinValue(p), absoluteHeightsAbove, absoluteHeightsBelow,
                                                            absoluteHeightsLeft, absoluteHeightsRight,
                                                            SNOW_LIMIT, ROCK_LIMIT, GRASS_LIMIT, WATER_LEVEL,
-                                                           SNOW_COLOR, ROCK_COLOR, GRASS_COLOR, SAND_COLOR, WATER_COLOR);
+                                                           snowColor, rockColor, grassColor, sandColor, waterColor);
         }
         currentChunks.push_back(allSeenChunks[index]);
     }
@@ -276,6 +282,8 @@ void GameManager::reactToMouseMovement(int mx, int my, double theta, double dist
         continueButton.setIsHighlighted(continueButton.containsPoint(mx, screenHeight - my));
 
         quitButton.setIsHighlighted(quitButton.containsPoint(mx, screenHeight - my));
+
+        cycleColorsButton.setIsHighlighted(cycleColorsButton.containsPoint(mx, screenHeight - my));
     }
     else if(currentStatus == End)
     {
@@ -312,6 +320,10 @@ void GameManager::reactToMouseClick(int mx, int my)
         else if(quitButton.containsPoint(mx,screenHeight -  my))
         {
             closeWindow = true;
+        }
+        else if(cycleColorsButton.containsPoint(mx, screenHeight - my))
+        {
+            cycleColors();
         }
     }
     else if(currentStatus == End)
@@ -391,6 +403,54 @@ void GameManager::togglePaused()
         showMouse = true;
     }
 }
+void GameManager::cycleColors()
+{
+    if(curColorScheme == Plain)
+    {
+        curColorScheme = Majestic;
+    }
+    else if(curColorScheme == Majestic)
+    {
+        curColorScheme = Lava;
+    }
+    else if(curColorScheme == Lava)
+    {
+        curColorScheme = Plain;
+    }
+    updateColorScheme(curColorScheme);
+}
+void GameManager::updateColorScheme(ColorScheme inputScheme)
+{
+    if(inputScheme == Plain)
+    {
+        snowColor = SNOW_COLOR_PLAIN;
+        rockColor = ROCK_COLOR_PLAIN;
+        grassColor = GRASS_COLOR_PLAIN;
+        sandColor = SAND_COLOR_PLAIN;
+        waterColor = WATER_COLOR_PLAIN;
+    }
+    else if(inputScheme == Majestic)
+    {
+        snowColor = SNOW_COLOR_MAJESTIC;
+        rockColor = ROCK_COLOR_MAJESTIC;
+        grassColor = GRASS_COLOR_MAJESTIC;
+        sandColor = SAND_COLOR_MAJESTIC;
+        waterColor = WATER_COLOR_MAJESTIC;
+    }
+    else if(inputScheme == Lava)
+    {
+        snowColor = SNOW_COLOR_LAVA;
+        rockColor = ROCK_COLOR_LAVA;
+        grassColor = GRASS_COLOR_LAVA;
+        sandColor = SAND_COLOR_LAVA;
+        waterColor = WATER_COLOR_LAVA;
+    }
+    for (std::pair<int, std::shared_ptr<Chunk>> element : allSeenChunks)
+    {
+        element.second->initializeTerrainColorMap(snowColor, rockColor, grassColor, sandColor, waterColor);
+        element.second->initializeSquareColors();
+    }
+}
 
 // UI
 void GameManager::drawUI() const
@@ -409,6 +469,7 @@ void GameManager::drawUI() const
     {
         continueButton.draw();
         quitButton.draw();
+        cycleColorsButton.draw();
     }
     else if(currentStatus == End)
     {
