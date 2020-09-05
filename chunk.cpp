@@ -169,9 +169,9 @@ void Chunk::initializeSquareColors()
             else if(y > grassLimit)
             {
                 color = terrainToColor.at(Grass);
-                color.r = color.r * ((y - grassLimit) / (rockLimit - grassLimit) + 0.25);
-                color.g = color.g * ((y - grassLimit) / (rockLimit - grassLimit) + 0.25);
-                color.b = color.b * ((y - grassLimit) / (rockLimit - grassLimit) + 0.25);
+                color.r = color.r * (abs(y - grassLimit) / (rockLimit - grassLimit) + 0.5);
+                color.g = color.g * (abs(y - grassLimit) / (rockLimit - grassLimit) + 0.5);
+                color.b = color.b * (abs(y - grassLimit) / (rockLimit - grassLimit) + 0.5);
             }
             else
             {

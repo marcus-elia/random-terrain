@@ -50,7 +50,7 @@ private:
     double TERRAIN_HEIGHT_FACTOR = 200;
     double SNOW_LIMIT = 350;
     double ROCK_LIMIT = 250;
-    double GRASS_LIMIT = 25;
+    double GRASS_LIMIT = 75;
     RGBAcolor SNOW_COLOR = {1.0, 0.9, 1.0, 1.0};
     RGBAcolor ROCK_COLOR = {0.6, 0.64, 0.62, 1.0};
     RGBAcolor GRASS_COLOR = {0.2, 0.75, 0.08, 1.0};
