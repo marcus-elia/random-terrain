@@ -30,12 +30,12 @@ void PerlinNoiseGenerator::fillNoiseSeed(std::vector<double> topInput, std::vect
                                          std::vector<double> leftInput, std::vector<double> rightInput)
 {
     // Fill in the 2d array with random values
-    srand(time(NULL));
+    RandomNumberGenerator rng;
     for(int i = 0; i < width; i++)
     {
         noiseSeed.emplace_back(std::vector<double>());
         for(int j = 0; j < height; j++)
-            noiseSeed[i].push_back((double)(rand() % 100) / 100);
+            noiseSeed[i].push_back(rng.getRandom());
     }
     setBorders(topInput, bottomInput, leftInput, rightInput);
 }

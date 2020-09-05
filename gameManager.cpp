@@ -18,7 +18,7 @@ GameManager::GameManager(int inputScreenWidth, int inputScreenHeight, int inputR
     screenHeight = inputScreenHeight;
     renderRadius = inputRenderRadius;
     chunkSeeds = PerlinNoiseGenerator(PERLIN_SEED_SIZE, PERLIN_SEED_SIZE, 0.2);
-
+    
     initializePlayer();
     updateCurrentChunks();
     initializeButtons();
