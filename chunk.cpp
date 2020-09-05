@@ -382,6 +382,7 @@ void Chunk::draw() const
         glEnd();
     }
 
+    glShadeModel( GL_SMOOTH );
     drawWater();
 
     glEnable(GL_CULL_FACE);
