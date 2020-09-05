@@ -4,29 +4,33 @@ Chunk::Chunk()
 {
     topLeft = {0, 0};
     sideLength = 512;
-    groundColor = {1,1,1,1};
     initializeCenter();
     initializeChunkID();
 }
-Chunk::Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide, RGBAcolor inputGroundColor,
-        std::vector<std::vector<double>> terrainHeights, double inputHeightScaleFactor, double inputPerlinSeed,
+Chunk::Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide,
+             std::vector<std::vector<double>> terrainHeights, double inputHeightScaleFactor, double inputPerlinSeed,
              const std::vector<double> &absoluteHeightsAbove, const std::vector<double> &absoluteHeightsBelow,
              const std::vector<double> &absoluteHeightsLeft, const std::vector<double> &absoluteHeightsRight,
-             double inputSnowLimit, RGBAcolor inputSnowColor)
+             double inputSnowLimit, double inputRockLimit, double inputGrassLimit,
+             RGBAcolor inputSnowColor, RGBAcolor inputRockColor, RGBAcolor inputGrassColor, RGBAcolor inputSandColor,
+             RGBAcolor inputWaterColor)
 {
     topLeft = inputTopLeft;
     sideLength = inputSideLength;
     pointsPerSide = inputPointsPerSide;
     heightScaleFactor = inputHeightScaleFactor;
-    groundColor = inputGroundColor;
     snowLimit = inputSnowLimit;
-    snowColor = inputSnowColor;
+    rockLimit = inputRockLimit;
+    grassLimit = inputGrassLimit;
     perlinSeed = inputPerlinSeed > 0 ? inputPerlinSeed : 0.1; // can't be zero, gets divided by
     initializeCenter();
     initializeChunkID();
     initializeTerrainPoints(terrainHeights);
     overwriteBorderHeights(absoluteHeightsAbove, absoluteHeightsBelow, absoluteHeightsLeft, absoluteHeightsRight);
     initializeNormalVectors();
+    initializeTerrainColorMap(inputSnowColor, inputRockColor, inputGrassColor, inputSandColor, inputWaterColor);
+    initializeSquareTerrainType();
+    initializeSquareColors();
 }
 
 void Chunk::initializeCenter()
@@ -106,8 +110,80 @@ void Chunk::overwriteBorderHeights(const std::vector<double> &absoluteHeightsAbo
         }
     }
 }
+void Chunk::initializeTerrainColorMap(RGBAcolor snowColor, RGBAcolor rockColor, RGBAcolor grassColor, RGBAcolor sandColor, RGBAcolor waterColor)
+{
+    terrainToColor[Snow] = snowColor;
+    terrainToColor[Rock] = rockColor;
+    terrainToColor[Grass] = grassColor;
+    terrainToColor[Sand] = sandColor;
+    terrainToColor[Water] = waterColor;
+}
+void Chunk::initializeSquareTerrainType()
+{
+    for(int i = 0; i < pointsPerSide - 1; i++)
+    {
+        squareTerrainType.emplace_back(std::vector<TerrainType>());
+        for(int j = 0; j < pointsPerSide - 1; j++)
+        {
+            double y = terrainPoints[i][j].y;
+            if(y > snowLimit)
+            {
+                squareTerrainType[i].push_back(Snow);
+            }
+            else if(y > rockLimit)
+            {
+                squareTerrainType[i].push_back(Rock);
+            }
+            else if(y > grassLimit)
+            {
+                squareTerrainType[i].push_back(Grass);
+            }
+            else
+            {
+                squareTerrainType[i].push_back(Sand);
+            }
+        }
+    }
+}
 
-
+void Chunk::initializeSquareColors()
+{
+    RGBAcolor color;
+    for(int i = 0; i < pointsPerSide - 1; i++)
+    {
+        squareColors.emplace_back(std::vector<RGBAcolor>());
+        for(int j = 0; j < pointsPerSide - 1; j++)
+        {
+            double y = terrainPoints[i][j].y;
+            if(y > snowLimit)
+            {
+                color = terrainToColor.at(Snow);
+            }
+            else if(y > rockLimit)
+            {
+                color = terrainToColor.at(Rock);
+                color.r = color.r * ((y - rockLimit) / (snowLimit - rockLimit) + 0.5);
+                color.g = color.g * ((y - rockLimit) / (snowLimit - rockLimit) + 0.5);
+                color.b = color.b * ((y - rockLimit) / (snowLimit - rockLimit) + 0.5);
+            }
+            else if(y > grassLimit)
+            {
+                color = terrainToColor.at(Grass);
+                color.r = color.r * ((y - grassLimit) / (rockLimit - grassLimit) + 0.25);
+                color.g = color.g * ((y - grassLimit) / (rockLimit - grassLimit) + 0.25);
+                color.b = color.b * ((y - grassLimit) / (rockLimit - grassLimit) + 0.25);
+            }
+            else
+            {
+                color = terrainToColor.at(Sand);
+                color.r = color.r * (y/grassLimit + 0.5);
+                color.g = color.g * (y/grassLimit + 0.5);
+                color.b = color.b * (y/grassLimit + 0.5);
+            }
+            squareColors[i].push_back(color);
+        }
+    }
+}
 
 
 
@@ -240,37 +316,44 @@ double Chunk::absoluteToRelativeHeight(double y) const
 
 RGBAcolor Chunk::chooseColor(double y) const
 {
-    double r,g,b;
+    double r,g,b,a;
     RGBAcolor currentColor;
     if(y > snowLimit)
     {
-        currentColor = snowColor;
+        currentColor = terrainToColor.at(Snow);
+    }
+    else if(y > rockLimit)
+    {
+        currentColor = terrainToColor.at(Rock);
+    }
+    else if(y > grassLimit)
+    {
+        currentColor = terrainToColor.at(Grass);
     }
     else
     {
-        currentColor = groundColor;
+        currentColor = terrainToColor.at(Sand);
     }
-    r = currentColor.r*absoluteToRelativeHeight(y);
-    g = currentColor.g*absoluteToRelativeHeight(y);
-    b = currentColor.b*absoluteToRelativeHeight(y);
-    return {r, g, b,1.0};
+    double darknessFactor = absoluteToRelativeHeight(y)*(0.5) + 0.5;
+    r = currentColor.r*darknessFactor;
+    g = currentColor.g*darknessFactor;
+    b = currentColor.b*darknessFactor;
+    a = currentColor.a;
+    return {r, g, b,a};
 }
 void Chunk::draw() const
 {
     glDisable(GL_CULL_FACE);
     glShadeModel( GL_FLAT );
-    RGBAcolor currentColor;
     for(int j = 0; j < pointsPerSide - 1; j++)
     {
-        currentColor = chooseColor(terrainPoints[0][j].y);
-        setGLColor(currentColor);
+        setGLColor(squareColors[0][j]);
         glBegin(GL_TRIANGLE_STRIP);
         drawPoint(terrainPoints[0][j]);
         drawPoint(terrainPoints[0][j+1]);
         for(int i = 1; i < pointsPerSide; i++)
         {
-            currentColor = chooseColor(terrainPoints[i][j].y);
-            setGLColor(currentColor);
+            setGLColor(squareColors[i-1][j]);
             drawPoint(terrainPoints[i][j]);
             drawPoint(terrainPoints[i][j+1]);
         }

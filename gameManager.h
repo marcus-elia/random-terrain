@@ -44,13 +44,18 @@ private:
     bool showMouse = true;
 
     // Game parameters
-    RGBAcolor CHUNK_GROUND_COLOR = {0, 1, 0, 1};
     int CHUNK_SIZE = 512;
     int POINTS_PER_CHUNK = 20;
     int PERLIN_SEED_SIZE = 10;
     double TERRAIN_HEIGHT_FACTOR = 200;
     double SNOW_LIMIT = 350;
-    RGBAcolor SNOW_COLOR = {1, 0.9, 1, 1.0};
+    double ROCK_LIMIT = 250;
+    double GRASS_LIMIT = 25;
+    RGBAcolor SNOW_COLOR = {1.0, 0.9, 1.0, 1.0};
+    RGBAcolor ROCK_COLOR = {0.6, 0.64, 0.62, 1.0};
+    RGBAcolor GRASS_COLOR = {0.2, 0.75, 0.08, 1.0};
+    RGBAcolor SAND_COLOR = {1.0, 0.84, 0.33, 1.0};
+    RGBAcolor WATER_COLOR = {0.0, 0.24, 1.0, 0.75};
     double PLAYER_HEIGHT = 20;
     double PLAYER_RADIUS = 5;
     double PLAYER_SPEED = 2;

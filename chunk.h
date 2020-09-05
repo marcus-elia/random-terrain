@@ -5,9 +5,12 @@
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
+#include <unordered_map>
 #include "graphics.h"
 #include "structs.h"
 #include "mathHelper.h"
+
+enum TerrainType {Snow, Grass, Rock, Sand, Water};
 
 class Chunk
 {
@@ -32,17 +35,22 @@ private:
     // The number of the chunk based on its location
     int chunkID;
 
-    double snowLimit; // draw snow above here
-    RGBAcolor snowColor;
-    RGBAcolor groundColor;
+    double snowLimit;  // draw snow above here
+    double rockLimit;  // draw rock above here
+    double grassLimit; // draw grass above here, sand below
+    std::vector<std::vector<TerrainType>> squareTerrainType;
+    std::unordered_map<TerrainType, RGBAcolor> terrainToColor;
+    std::vector<std::vector<RGBAcolor>> squareColors;
 
 public:
     Chunk();
-    Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide, RGBAcolor inputGroundColor,
+    Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide,
           std::vector<std::vector<double>> terrainHeights, double inputHeightScaleFactor, double inputPerlinSeed,
           const std::vector<double> &absoluteHeightsAbove, const std::vector<double> &absoluteHeightsBelow,
           const std::vector<double> &absoluteHeightsLeft, const std::vector<double> &absoluteHeightsRight,
-          double inputSnowLimit, RGBAcolor inputSnowColor);
+          double inputSnowLimit, double inputRockLimit, double inputGrassLimit,
+          RGBAcolor inputSnowColor, RGBAcolor inputRockColor, RGBAcolor inputGrassColor, RGBAcolor inputSandColor,
+          RGBAcolor inputWaterColor);
 
     void initializeCenter();
     void initializeChunkID();
@@ -50,6 +58,9 @@ public:
     void initializeNormalVectors();
     void overwriteBorderHeights(const std::vector<double> &absoluteHeightsAbove, const std::vector<double> &absoluteHeightsBelow,
                                 const std::vector<double> &absoluteHeightsLeft, const std::vector<double> &absoluteHeightsRight);
+    void initializeTerrainColorMap(RGBAcolor snowColor, RGBAcolor rockColor, RGBAcolor grassColor, RGBAcolor sandColor, RGBAcolor waterColor);
+    void initializeSquareTerrainType();
+    void initializeSquareColors();
 
     // Getters
     Point2D getTopLeft() const;
