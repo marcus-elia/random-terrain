@@ -51,6 +51,7 @@ private:
     double SNOW_LIMIT = 350;
     double ROCK_LIMIT = 250;
     double GRASS_LIMIT = 75;
+    double WATER_LEVEL = 65;
     RGBAcolor SNOW_COLOR = {1.0, 0.9, 1.0, 1.0};
     RGBAcolor ROCK_COLOR = {0.6, 0.64, 0.62, 1.0};
     RGBAcolor GRASS_COLOR = {0.2, 0.75, 0.08, 1.0};
@@ -59,7 +60,7 @@ private:
     double PLAYER_HEIGHT = 20;
     double PLAYER_RADIUS = 5;
     double PLAYER_SPEED = 2;
-    double MOUSE_SENSITIVITY = 0.03;
+    double MOUSE_SENSITIVITY = 0.02;
     int MAX_DISTANCE_FROM_SPAWN = 10240; // 10 chunks
     double GRAVITY = -0.5;
     double PLAYER_JUMP_AMOUNT = 6;

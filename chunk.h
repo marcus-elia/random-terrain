@@ -38,9 +38,11 @@ private:
     double snowLimit;  // draw snow above here
     double rockLimit;  // draw rock above here
     double grassLimit; // draw grass above here, sand below
+    double waterLevel;
     std::vector<std::vector<TerrainType>> squareTerrainType;
     std::unordered_map<TerrainType, RGBAcolor> terrainToColor;
     std::vector<std::vector<RGBAcolor>> squareColors;
+    std::vector<std::vector<bool>> drawWaterAt;
 
 public:
     Chunk();
@@ -48,7 +50,7 @@ public:
           std::vector<std::vector<double>> terrainHeights, double inputHeightScaleFactor, double inputPerlinSeed,
           const std::vector<double> &absoluteHeightsAbove, const std::vector<double> &absoluteHeightsBelow,
           const std::vector<double> &absoluteHeightsLeft, const std::vector<double> &absoluteHeightsRight,
-          double inputSnowLimit, double inputRockLimit, double inputGrassLimit,
+          double inputSnowLimit, double inputRockLimit, double inputGrassLimit, double inputWaterLevel,
           RGBAcolor inputSnowColor, RGBAcolor inputRockColor, RGBAcolor inputGrassColor, RGBAcolor inputSandColor,
           RGBAcolor inputWaterColor);
 
@@ -61,6 +63,7 @@ public:
     void initializeTerrainColorMap(RGBAcolor snowColor, RGBAcolor rockColor, RGBAcolor grassColor, RGBAcolor sandColor, RGBAcolor waterColor);
     void initializeSquareTerrainType();
     void initializeSquareColors();
+    void initializeDrawWaterAt();
 
     // Getters
     Point2D getTopLeft() const;
@@ -84,6 +87,7 @@ public:
 
     RGBAcolor chooseColor(double y) const;
     void draw() const;
+    void drawWater() const;
 };
 
 #endif //RANDOM_TERRAIN_CHUNK_H

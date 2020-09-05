@@ -11,7 +11,7 @@ Chunk::Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide,
              std::vector<std::vector<double>> terrainHeights, double inputHeightScaleFactor, double inputPerlinSeed,
              const std::vector<double> &absoluteHeightsAbove, const std::vector<double> &absoluteHeightsBelow,
              const std::vector<double> &absoluteHeightsLeft, const std::vector<double> &absoluteHeightsRight,
-             double inputSnowLimit, double inputRockLimit, double inputGrassLimit,
+             double inputSnowLimit, double inputRockLimit, double inputGrassLimit, double inputWaterLevel,
              RGBAcolor inputSnowColor, RGBAcolor inputRockColor, RGBAcolor inputGrassColor, RGBAcolor inputSandColor,
              RGBAcolor inputWaterColor)
 {
@@ -22,6 +22,7 @@ Chunk::Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide,
     snowLimit = inputSnowLimit;
     rockLimit = inputRockLimit;
     grassLimit = inputGrassLimit;
+    waterLevel = inputWaterLevel;
     perlinSeed = inputPerlinSeed > 0 ? inputPerlinSeed : 0.1; // can't be zero, gets divided by
     initializeCenter();
     initializeChunkID();
@@ -31,6 +32,7 @@ Chunk::Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide,
     initializeTerrainColorMap(inputSnowColor, inputRockColor, inputGrassColor, inputSandColor, inputWaterColor);
     initializeSquareTerrainType();
     initializeSquareColors();
+    initializeDrawWaterAt();
 }
 
 void Chunk::initializeCenter()
@@ -181,6 +183,25 @@ void Chunk::initializeSquareColors()
                 color.b = color.b * (y/grassLimit + 0.5);
             }
             squareColors[i].push_back(color);
+        }
+    }
+}
+void Chunk::initializeDrawWaterAt()
+{
+    for(int i = 0; i < pointsPerSide - 1; i++)
+    {
+        drawWaterAt.emplace_back(std::vector<bool>());
+        for(int j = 0; j < pointsPerSide - 1; j++)
+        {
+            if(terrainPoints[i][j].y < waterLevel || terrainPoints[i+1][j].y < waterLevel ||
+            terrainPoints[i][j+1].y < waterLevel || terrainPoints[i+1][j+1].y < waterLevel)
+            {
+                drawWaterAt[i].push_back(true);
+            }
+            else
+            {
+                drawWaterAt[i].push_back(false);
+            }
         }
     }
 }
@@ -359,5 +380,29 @@ void Chunk::draw() const
         }
         glEnd();
     }
+
+    drawWater();
+
     glEnable(GL_CULL_FACE);
+}
+
+void Chunk::drawWater() const
+{
+    setGLColor(terrainToColor.at(Water));
+    glBegin(GL_QUADS);
+    for(int i = 0; i < pointsPerSide - 1; i++)
+    {
+        for(int j = 0; j < pointsPerSide; j++)
+        {
+            if(drawWaterAt[i][j])
+            {
+                glVertex3f(terrainPoints[i][j].x, waterLevel, terrainPoints[i][j].z);
+                glVertex3f(terrainPoints[i][j+1].x, waterLevel, terrainPoints[i][j+1].z);
+                glVertex3f(terrainPoints[i+1][j+1].x, waterLevel, terrainPoints[i+1][j+1].z);
+                glVertex3f(terrainPoints[i+1][j].x, waterLevel, terrainPoints[i+1][j].z);
+
+            }
+        }
+    }
+    glEnd();
 }

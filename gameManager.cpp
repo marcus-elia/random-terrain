@@ -172,7 +172,7 @@ void GameManager::updateCurrentChunks()
             allSeenChunks[index] = std::make_shared<Chunk>(p, CHUNK_SIZE, POINTS_PER_CHUNK, noise,
                     TERRAIN_HEIGHT_FACTOR, getPerlinValue(p), absoluteHeightsAbove, absoluteHeightsBelow,
                                                            absoluteHeightsLeft, absoluteHeightsRight,
-                                                           SNOW_LIMIT, ROCK_LIMIT, GRASS_LIMIT,
+                                                           SNOW_LIMIT, ROCK_LIMIT, GRASS_LIMIT, WATER_LEVEL,
                                                            SNOW_COLOR, ROCK_COLOR, GRASS_COLOR, SAND_COLOR, WATER_COLOR);
         }
         currentChunks.push_back(allSeenChunks[index]);
