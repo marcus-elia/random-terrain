@@ -13,7 +13,7 @@
 #include "perlinNoiseGenerator.h"
 
 enum GameStatus {Intro, Playing, End, Paused};
-enum ColorScheme {Plain, Majestic, Lava};
+enum ColorScheme {Plain, Majestic, Lava, Ice};
 
 class GameManager
 {
@@ -71,6 +71,11 @@ private:
     RGBAcolor GRASS_COLOR_LAVA = {0.2, 0.25, 0.25, 1.0};
     RGBAcolor SAND_COLOR_LAVA = {0.15, 0.02, 0.01, 1.0};
     RGBAcolor WATER_COLOR_LAVA = {0.9, 0.5, 0.0, 0.87};
+    RGBAcolor SNOW_COLOR_ICE = {0.5, 0.5, 1.0, 0.95};
+    RGBAcolor ROCK_COLOR_ICE = {0.85, 0.85, 1.0, 0.95};
+    RGBAcolor GRASS_COLOR_ICE = {0.65, 0.65, 0.65, 1.0};
+    RGBAcolor SAND_COLOR_ICE =  {0.92, 0.82, 0.39, 1.0};
+    RGBAcolor WATER_COLOR_ICE = {0.75, 0.75, 1.0, 0.87};
     double PLAYER_HEIGHT = 10;
     double PLAYER_RADIUS = 3;
     double PLAYER_SPEED = 1.5;

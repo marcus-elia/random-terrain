@@ -416,6 +416,10 @@ void GameManager::cycleColors()
     }
     else if(curColorScheme == Lava)
     {
+        curColorScheme = Ice;
+    }
+    else if(curColorScheme == Ice)
+    {
         curColorScheme = Plain;
     }
     updateColorScheme(curColorScheme);
@@ -445,6 +449,14 @@ void GameManager::updateColorScheme(ColorScheme inputScheme)
         grassColor = GRASS_COLOR_LAVA;
         sandColor = SAND_COLOR_LAVA;
         waterColor = WATER_COLOR_LAVA;
+    }
+    else if(inputScheme == Ice)
+    {
+        snowColor = SNOW_COLOR_ICE;
+        rockColor = ROCK_COLOR_ICE;
+        grassColor = GRASS_COLOR_ICE;
+        sandColor = SAND_COLOR_ICE;
+        waterColor = WATER_COLOR_ICE;
     }
     for (std::pair<int, std::shared_ptr<Chunk>> element : allSeenChunks)
     {
