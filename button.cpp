@@ -91,7 +91,7 @@ void Button::draw() const
 {
     // Draw the text first
     setGLColor(textColor);
-    glRasterPos2i(centerX - (4*text.length()), centerY - 4);
+    glRasterPos2i(centerX - (4*text.length()) - 4, centerY - 4);
     for(const char &letter : text)
     {
         glutBitmapCharacter(GLUT_BITMAP_9_BY_15, letter);
