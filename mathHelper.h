@@ -51,4 +51,9 @@ int getChunkIDContainingPoint(Point p, int chunkSize);
 double dotProduct(Point p1, Point p2);
 Point crossProduct(Point p1, Point p2);
 
+// Point operations
+void movePoint(Point &p, double deltaX, double deltaY, double deltaZ);
+void rotatePointAroundPoint(Point &p, const Point &pBase, double thetaX, double thetaY, double thetaZ);
+Point getRotatedPointAroundPoint(const Point &p, const Point &pBase, double thetaX, double thetaY, double thetaZ);
+
 #endif //RANDOM_TERRAIN_MATHHELPER_H
