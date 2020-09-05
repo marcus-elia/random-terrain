@@ -17,7 +17,7 @@ GameManager::GameManager(int inputScreenWidth, int inputScreenHeight, int inputR
     screenWidth = inputScreenWidth;
     screenHeight = inputScreenHeight;
     renderRadius = inputRenderRadius;
-    chunkSeeds = PerlinNoiseGenerator(PERLIN_SEED_SIZE, PERLIN_SEED_SIZE, 100);
+    chunkSeeds = PerlinNoiseGenerator(PERLIN_SEED_SIZE, PERLIN_SEED_SIZE, 0.2);
 
     initializePlayer();
     updateCurrentChunks();
@@ -56,6 +56,7 @@ void GameManager::initializeButtons()
 void GameManager::makeInstructions()
 {
     instructions.push_back("Use w,a,s,d to move and spacebar to jump. Press p to pause.");
+    instructions.push_back("Hold e in addition to w,a,s, or d to go fast.");
 }
 
 // ===========================
@@ -129,6 +130,10 @@ void GameManager::setDKey(bool input)
 void GameManager::setSpacebar(bool input)
 {
     spacebar = input;
+}
+void GameManager::setHyperSpeed(bool input)
+{
+    hyperSpeed = input;
 }
 void GameManager::setCurrentStatus(GameStatus input)
 {
@@ -347,6 +352,13 @@ void GameManager::playerTick()
     if(spacebar)
     {
         player.tryToJump();
+    }
+    if(hyperSpeed)
+    {
+        for(int i = 0; i < HYPER_SPEED_FACTOR; i++)
+        {
+            player.move();
+        }
     }
 
     // Check if the player has entered a new chunk

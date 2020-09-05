@@ -20,7 +20,7 @@ private:
     Player player;
 
     // Controls
-    bool wKey, aKey, sKey, dKey, spacebar;
+    bool wKey, aKey, sKey, dKey, spacebar, hyperSpeed;
 
     // Chunks
     PerlinNoiseGenerator chunkSeeds;
@@ -61,9 +61,10 @@ private:
     double PLAYER_RADIUS = 5;
     double PLAYER_SPEED = 2;
     double MOUSE_SENSITIVITY = 0.02;
-    int MAX_DISTANCE_FROM_SPAWN = 10240; // 10 chunks
+    int MAX_DISTANCE_FROM_SPAWN = 20480; // 20 chunks
     double GRAVITY = -0.5;
     double PLAYER_JUMP_AMOUNT = 6;
+    int HYPER_SPEED_FACTOR = 6;
     int BUTTON_WIDTH = 128;
     int BUTTON_HEIGHT = 64;
     int BUTTON_RADIUS = 16;
@@ -100,6 +101,7 @@ public:
     void setSKey(bool input);
     void setDKey(bool input);
     void setSpacebar(bool input);
+    void setHyperSpeed(bool input);
     void setCurrentStatus(GameStatus input);
 
     // Chunks
