@@ -18,7 +18,7 @@ GameManager::GameManager(int inputScreenWidth, int inputScreenHeight, int inputR
     screenHeight = inputScreenHeight;
     renderRadius = inputRenderRadius;
     chunkSeeds = PerlinNoiseGenerator(PERLIN_SEED_SIZE, PERLIN_SEED_SIZE, 0.2);
-    
+
     initializePlayer();
     updateCurrentChunks();
     initializeButtons();
@@ -256,7 +256,7 @@ Point GameManager::getCameraUp() const
 }
 
 // Mouse
-void GameManager::reactToMouseMovement(int mx, int my, double theta)
+void GameManager::reactToMouseMovement(int mx, int my, double theta, double distance)
 {
     if(currentStatus == Intro)
     {
@@ -266,7 +266,8 @@ void GameManager::reactToMouseMovement(int mx, int my, double theta)
     }
     else if(currentStatus == Playing)
     {
-        player.updateAngles(theta);
+        double clampedDistance = fmin(distance, 50);
+        player.updateAngles(theta, clampedDistance);
         player.updateSphericalDirectionBasedOnAngles();
         player.setVelocity(wKey, aKey, sKey, dKey);
     }

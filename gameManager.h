@@ -60,7 +60,7 @@ private:
     double PLAYER_HEIGHT = 20;
     double PLAYER_RADIUS = 5;
     double PLAYER_SPEED = 2;
-    double MOUSE_SENSITIVITY = 0.02;
+    double MOUSE_SENSITIVITY = 0.005;
     int MAX_DISTANCE_FROM_SPAWN = 20480; // 20 chunks
     double GRAVITY = -0.5;
     double PLAYER_JUMP_AMOUNT = 6;
@@ -124,7 +124,7 @@ public:
     Point getCameraUp() const;
 
     // Mouse
-    void reactToMouseMovement(int mx, int my, double theta);
+    void reactToMouseMovement(int mx, int my, double theta, double distance);
     void reactToMouseClick(int mx, int my);
 
     void draw() const;

@@ -82,7 +82,7 @@ public:
     void setVelocity(bool wKey, bool aKey, bool sKey, bool dKey);
 
     // Update the xzAngle and yAngle based on theta resulting from a mouse movement
-    void updateAngles(double theta);
+    void updateAngles(double theta, double distance);
 
     // Use xzAngle, yAngle, and location to determine the spherical direction.
     void updateSphericalDirectionBasedOnAngles();

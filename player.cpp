@@ -265,9 +265,9 @@ void Player::setVelocity(bool wKey, bool aKey, bool sKey, bool dKey)
 }
 
 // Update the xzAngle and yAngle based on theta resulting from a mouse movement
-void Player::updateAngles(double theta)
+void Player::updateAngles(double theta, double distance)
 {
-    double horizontalAmount = sensitivity * cos(theta);
+    double horizontalAmount = sensitivity * distance* cos(theta);
     xzAngle += horizontalAmount;
     if(xzAngle > 2*PI)
     {
@@ -278,7 +278,7 @@ void Player::updateAngles(double theta)
         xzAngle += 2*PI;
     }
 
-    double verticalAmount = sensitivity * sin(theta);
+    double verticalAmount = sensitivity * distance* sin(theta);
     yAngle -= verticalAmount; // negative sign since Glut's mouse functions treat +y as down
     if(yAngle > PI/2 - VERTICAL_LIMIT)
     {

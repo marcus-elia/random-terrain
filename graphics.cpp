@@ -169,7 +169,8 @@ void cursor(int x, int y)
         return;
     }
     double theta = atan2(y - prevMouseY, x - prevMouseX);
-    manager.reactToMouseMovement(x, y, theta);
+    double distance = distanceFormula(x, y, prevMouseX, prevMouseY);
+    manager.reactToMouseMovement(x, y, theta, distance);
     prevMouseX = x;
     prevMouseY = y;
 
