@@ -29,7 +29,6 @@ Building::Building(Point inputCenter, int inputSideLength, int inputHeight,
 
 void Building::initializeSolids()
 {
-    Point center = {center.x, (double)height/2, center.z};
     solids.push_back(std::make_shared<RecPrism>(RecPrism(center, color,
                                                          sideLength, height, sideLength, edgeColor)));
 }
