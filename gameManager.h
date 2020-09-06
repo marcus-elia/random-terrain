@@ -51,11 +51,11 @@ private:
     int CHUNK_SIZE = 512;
     int POINTS_PER_CHUNK = 30;
     int PERLIN_SEED_SIZE = 10;
-    double TERRAIN_HEIGHT_FACTOR = 200;
-    double SNOW_LIMIT = 350;
-    double ROCK_LIMIT = 250;
-    double GRASS_LIMIT = 75;
-    double WATER_LEVEL = 65;
+    double TERRAIN_HEIGHT_FACTOR = 500;
+    double SNOW_LIMIT = 920;
+    double ROCK_LIMIT = 750;
+    double GRASS_LIMIT = 120;
+    double WATER_LEVEL = 95;
     RGBAcolor SNOW_COLOR_PLAIN = {1.0, 0.9, 1.0, 1.0};
     RGBAcolor ROCK_COLOR_PLAIN = {0.6, 0.64, 0.62, 1.0};
     RGBAcolor GRASS_COLOR_PLAIN = {0.2, 0.75, 0.08, 1.0};

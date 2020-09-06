@@ -181,7 +181,7 @@ void GameManager::updateCurrentChunks()
                                                             relativeHeightsAbove, relativeHeightsBelow,
                                                             relativeHeightsLeft, relativeHeightsRight);
             RandomNumberGenerator rng;
-            bool hasCity = rng.getRandom() < 0.1;
+            bool hasCity = rng.getRandom() < 0.05;
             // Create the chunk
             allSeenChunks[index] = std::make_shared<Chunk>(p, CHUNK_SIZE, POINTS_PER_CHUNK, noise,
                     TERRAIN_HEIGHT_FACTOR, getPerlinValue(p), absoluteHeightsAbove, absoluteHeightsBelow,
