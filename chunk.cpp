@@ -237,8 +237,8 @@ void Chunk::initializeBuildings()
             if(closeEnough && flatEnough && randomFactor && isGrass)
             {
                 // Make buildings taller closer to the city center
-                minHeight = fmax(50, 100 - (distanceFromCity / (sideLength/4)));
-                maxHeight = fmax(150, 300 - (distanceFromCity / (sideLength/4)));
+                minHeight = fmax(50, 100 - 50*(distanceFromCity / (sideLength/4)));
+                maxHeight = fmax(150, 300 - 50*(distanceFromCity / (sideLength/4)));
                 height = rng.getRandom()*maxHeight + minHeight;
                 bottomY = getMinSquareHeight(i, j);
                 // Find the actual bottom of the base of the building
