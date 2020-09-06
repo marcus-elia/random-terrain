@@ -33,6 +33,7 @@ Chunk::Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide,
     initializeSquareTerrainType();
     initializeSquareColors();
     initializeDrawWaterAt();
+    initializeBuildings();
 }
 
 void Chunk::initializeCenter()
@@ -202,6 +203,23 @@ void Chunk::initializeDrawWaterAt()
             else
             {
                 drawWaterAt[i].push_back(false);
+            }
+        }
+    }
+}
+void Chunk::initializeBuildings()
+{
+    double buildingSideLength = sideLength / (pointsPerSide - 1);
+    RandomNumberGenerator rng;
+    for(int i = 0; i < pointsPerSide - 1; i++)
+    {
+        for(int j = 0; j < pointsPerSide - 1; j++)
+        {
+            if(squareTerrainType[i][j] == Grass && rng.getRandom() < 0.01)
+            {
+                double height = rng.getRandom()*100 + 100;
+                Point inputCenter = {terrainPoints[i][j].x, terrainPoints[i][j].y + height/2, terrainPoints[i][j].z};
+                buildings.push_back(std::make_shared<Building>(Building(inputCenter, buildingSideLength, height, {.5,.5,.5,1},{1,1,1,1}, PlainRectangle)));
             }
         }
     }
@@ -386,6 +404,11 @@ void Chunk::draw() const
     drawWater();
 
     glEnable(GL_CULL_FACE);
+
+    for(std::shared_ptr<Building> b : buildings)
+    {
+        b->draw();
+    }
 }
 
 void Chunk::drawWater() const

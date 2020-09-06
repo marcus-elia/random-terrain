@@ -5,7 +5,7 @@
 #include <vector>
 #include <memory>
 
-enum typeOfBuilding {Plain};
+enum typeOfBuilding {PlainRectangle};
 
 class Building
 {

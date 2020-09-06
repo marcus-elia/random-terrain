@@ -9,7 +9,7 @@ Building::Building()
     color = {0,0.4,1,1};
     edgeColor = {.9,.9,.9, 1};
 
-    buildingType = Plain;
+    buildingType = PlainRectangle;
 
     initializeSolids();
 }

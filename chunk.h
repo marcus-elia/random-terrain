@@ -9,6 +9,8 @@
 #include "graphics.h"
 #include "structs.h"
 #include "mathHelper.h"
+#include "building.h"
+#include "randomNumberGenerator.h"
 
 enum TerrainType {Snow, Grass, Rock, Sand, Water};
 
@@ -44,6 +46,8 @@ private:
     std::vector<std::vector<RGBAcolor>> squareColors;
     std::vector<std::vector<bool>> drawWaterAt;
 
+    std::vector<std::shared_ptr<Building>> buildings;
+
 public:
     Chunk();
     Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide,
@@ -64,6 +68,7 @@ public:
     void initializeSquareTerrainType();
     void initializeSquareColors();
     void initializeDrawWaterAt();
+    void initializeBuildings();
 
     // Getters
     Point2D getTopLeft() const;
