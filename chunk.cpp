@@ -13,7 +13,7 @@ Chunk::Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide,
              const std::vector<double> &absoluteHeightsLeft, const std::vector<double> &absoluteHeightsRight,
              double inputSnowLimit, double inputRockLimit, double inputGrassLimit, double inputWaterLevel,
              RGBAcolor inputSnowColor, RGBAcolor inputRockColor, RGBAcolor inputGrassColor, RGBAcolor inputSandColor,
-             RGBAcolor inputWaterColor)
+             RGBAcolor inputWaterColor, bool hasCity)
 {
     topLeft = inputTopLeft;
     sideLength = inputSideLength;
@@ -33,7 +33,11 @@ Chunk::Chunk(Point2D inputTopLeft, int inputSideLength, int inputPointsPerSide,
     initializeSquareTerrainType();
     initializeSquareColors();
     initializeDrawWaterAt();
-    initializeBuildings();
+    if(hasCity)
+    {
+        initializeRandomCityCenter();
+        initializeBuildings();
+    }
 }
 
 void Chunk::initializeCenter()
@@ -74,7 +78,7 @@ void Chunk::initializeNormalVectors()
             Point p4 = terrainPoints[i+1][j+1];
             Point v1 = {p2.x - p1.x, p2.y - p1.y, p2.z - p1.z};
             Point v2 = {p3.x - p1.x, p3.y - p1.y, p3.z - p1.z};
-            upperNormals[i].push_back(crossProduct(v1, v2));
+            upperNormals[i].push_back(crossProduct(v2, v1));
             Point v3 = {p2.x - p4.x, p2.y - p4.y, p2.z - p4.z};
             Point v4 = {p3.x - p4.x, p3.y - p4.y, p3.z - p4.z};
             lowerNormals[i].push_back(crossProduct(v3, v4));
@@ -207,18 +211,38 @@ void Chunk::initializeDrawWaterAt()
         }
     }
 }
+void Chunk::initializeRandomCityCenter()
+{
+    RandomNumberGenerator rng;
+    double x = center.x - sideLength/4 + rng.getRandom()*sideLength/2;
+    double z = center.z - sideLength/4 + rng.getRandom()*sideLength/2;
+    cityCenter = {x, 0, z};
+}
 void Chunk::initializeBuildings()
 {
     double buildingSideLength = sideLength / (pointsPerSide - 1);
     RandomNumberGenerator rng;
+    double distanceFromCity, minHeight, maxHeight, terrainAngle, bottomY, height;
+    bool closeEnough, flatEnough, randomFactor, isGrass;
     for(int i = 0; i < pointsPerSide - 1; i++)
     {
         for(int j = 0; j < pointsPerSide - 1; j++)
         {
-            if(squareTerrainType[i][j] == Grass && rng.getRandom() < 0.01)
+            distanceFromCity = distance2d(terrainPoints[i][j], cityCenter);
+            closeEnough = (rng.getRandom() > (distanceFromCity / (sideLength/2)));
+            terrainAngle = atan2(upperNormals[i][j].y, distance2d(upperNormals[i][j], {0,0,0}));
+            flatEnough = (rng.getRandom() < (terrainAngle / (PI/4)));
+            randomFactor = (rng.getRandom() < 0.25);
+            isGrass = (squareTerrainType[i][j] == Grass);
+            if(closeEnough && flatEnough && randomFactor && isGrass)
             {
-                double height = rng.getRandom()*100 + 100;
-                Point inputCenter = {terrainPoints[i][j].x, terrainPoints[i][j].y + height/2, terrainPoints[i][j].z};
+                // Make buildings taller closer to the city center
+                minHeight = fmax(50, 100 - (distanceFromCity / (sideLength/4)));
+                maxHeight = fmax(150, 300 - (distanceFromCity / (sideLength/4)));
+                height = rng.getRandom()*maxHeight + minHeight;
+                bottomY = getMinSquareHeight(i, j);
+                // Find the actual bottom of the base of the building
+                Point inputCenter = {terrainPoints[i][j].x + buildingSideLength/2, bottomY + height/2, terrainPoints[i][j].z + buildingSideLength/2};
                 buildings.push_back(std::make_shared<Building>(Building(inputCenter, buildingSideLength, height, {.5,.5,.5,1},{1,1,1,1}, PlainRectangle)));
             }
         }
@@ -350,6 +374,12 @@ double Chunk::relativeToAbsoluteHeight(double y) const
 double Chunk::absoluteToRelativeHeight(double y) const
 {
     return y / (perlinSeed*heightScaleFactor) - 1;
+}
+double Chunk::getMinSquareHeight(int i, int j) const
+{
+    double topMin = fmin(terrainPoints[i][j].y, terrainPoints[i+1][j].y);
+    double bottomMin = fmin(terrainPoints[i][j+1].y, terrainPoints[i+1][j+1].y);
+    return fmin(topMin, bottomMin);
 }
 
 

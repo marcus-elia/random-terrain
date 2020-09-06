@@ -47,6 +47,7 @@ private:
     std::vector<std::vector<bool>> drawWaterAt;
 
     std::vector<std::shared_ptr<Building>> buildings;
+    Point cityCenter; // where the game tries to put buildings within this chunk
 
 public:
     Chunk();
@@ -56,7 +57,7 @@ public:
           const std::vector<double> &absoluteHeightsLeft, const std::vector<double> &absoluteHeightsRight,
           double inputSnowLimit, double inputRockLimit, double inputGrassLimit, double inputWaterLevel,
           RGBAcolor inputSnowColor, RGBAcolor inputRockColor, RGBAcolor inputGrassColor, RGBAcolor inputSandColor,
-          RGBAcolor inputWaterColor);
+          RGBAcolor inputWaterColor, bool hasCity);
 
     void initializeCenter();
     void initializeChunkID();
@@ -68,6 +69,7 @@ public:
     void initializeSquareTerrainType();
     void initializeSquareColors();
     void initializeDrawWaterAt();
+    void initializeRandomCityCenter();
     void initializeBuildings();
 
     // Getters
@@ -84,6 +86,9 @@ public:
     // Returns the height of the terrain at the given point,
     // assuming that the point is in this chunk
     double getHeightAt(Point p) const;
+
+    // Check the 4 corners for the lowest height
+    double getMinSquareHeight(int i, int j) const;
 
     // Use the perlin seed and the height scale factor to convert a double
     // between 0 and 1 (the relative height) to the actual height
