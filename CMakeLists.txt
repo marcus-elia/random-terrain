@@ -10,14 +10,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++14 -Wno-deprecated -Werror=ret
 
 find_package (OpenGL REQUIRED)
 
-if (APPLE)
+if (UNIX)
     find_package(GLUT REQUIRED)
-endif (APPLE)
+endif (UNIX)
 
 if (WIN32)
     include_directories(${OPENGL_INCLUDE_DIR}  ${FREEGLUT_INCLUDE_DIRS})
     link_directories(${FREEGLUT_LIBRARY_DIRS})
-elseif (APPLE)
+elseif (UNIX)
     include_directories(${OPENGL_INCLUDE_DIR}  ${GLUT_INCLUDE_DIRS})
 endif ()
 
@@ -26,10 +26,13 @@ file(GLOB SOURCE_FILES
         *.h
         )
 
-add_executable(graphics graphics.h graphics.cpp gameManager.cpp gameManager.h structs.h button.cpp button.h mathHelper.cpp mathHelper.h chunk.cpp chunk.h player.cpp player.h perlinNoiseGenerator.cpp perlinNoiseGenerator.h randomNumberGenerator.cpp randomNumberGenerator.h solid.cpp solid.h recPrism.cpp recPrism.h building.cpp building.h)
+add_executable(graphics graphics.h graphics.cpp gameManager.cpp gameManager.h structs.h button.cpp button.h
+        mathHelper.cpp mathHelper.h chunk.cpp chunk.h player.cpp player.h perlinNoiseGenerator.cpp
+        perlinNoiseGenerator.h randomNumberGenerator.cpp randomNumberGenerator.h solid.cpp solid.h
+        recPrism.cpp recPrism.h building.cpp building.h)
 
 if (WIN32)
     target_link_libraries (graphics ${OPENGL_LIBRARIES} freeglut)
-elseif (APPLE)
+elseif (UNIX)
     target_link_libraries (graphics ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
 endif ()
